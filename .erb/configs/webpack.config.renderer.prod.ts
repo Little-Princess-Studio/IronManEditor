@@ -63,12 +63,12 @@ export default merge(baseConfig, {
           },
           'less-loader',
         ],
-        include: /\.module\.(le|a)ss$/,
+        include: /\.module\.(le|c)ss$/,
       },
       {
         test: /\.(le|c)ss$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader'],
-        exclude: /\.module\.(le|a)ss$/,
+        exclude: /\.module\.(le|c)ss$/,
       },
       // Fonts
       {
