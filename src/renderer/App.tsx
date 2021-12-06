@@ -1,5 +1,5 @@
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
-import './App.css';
+import './reset.css';
 
 const Hello = () => {
   return <div />;
