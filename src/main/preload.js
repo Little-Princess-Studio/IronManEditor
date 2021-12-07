@@ -17,4 +17,12 @@ contextBridge.exposeInMainWorld('electron', {
       }
     },
   },
+  dialog: {
+    showOpenDialog(options) {
+      return ipcRenderer.invoke('dialog:open', options);
+    },
+    showSaveDialog(options) {
+      return ipcRenderer.invoke('dialog:save', options);
+    },
+  },
 });

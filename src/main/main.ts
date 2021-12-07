@@ -16,6 +16,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import IpcService from './ipc-service';
 
 export default class AppUpdater {
   constructor() {
@@ -82,6 +83,9 @@ const createWindow = async () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+
+  const ipcService = new IpcService(mainWindow);
+  ipcService.init();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 

@@ -5,8 +5,17 @@ const StartPage: React.FC = () => {
     // TODO:
   };
 
-  const handleOpen = () => {
-    // TODO:
+  const handleOpen = async () => {
+    const res = await window.electron.dialog.showOpenDialog({
+      filters: [{ name: 'Files', extensions: ['json', 'json5'] }],
+      properties: ['openFile'],
+    });
+
+    if (!res.canceled && res.filePaths.length > 0) {
+      const filePath = res.filePaths[0];
+
+      // TODO: 
+    }
   };
 
   return (
