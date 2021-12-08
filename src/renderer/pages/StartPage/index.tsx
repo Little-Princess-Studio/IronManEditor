@@ -1,6 +1,9 @@
+import { useHistory } from 'react-router-dom';
 import './index.less';
 
 const StartPage: React.FC = () => {
+  const history = useHistory();
+
   const handleCreate = () => {
     // TODO:
   };
@@ -14,7 +17,16 @@ const StartPage: React.FC = () => {
     if (!res.canceled && res.filePaths.length > 0) {
       const filePath = res.filePaths[0];
 
-      // TODO: 
+      window.electron.ipcRenderer.once('file:read:result', (resp: IpcResponse) => {
+        if (resp.success) {
+          console.log('file:', resp.data);
+          history.replace('/editor');
+        } else {
+          console.warn(resp);
+        }
+      });
+
+      window.electron.file.readFile(filePath);
     }
   };
 
