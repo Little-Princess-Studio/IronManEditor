@@ -10,6 +10,7 @@ const StartPage: React.FC = () => {
   const handleCreate = () => {
     dispatch(updateWorkSpace({ fileName: 'New File' }));
     history.replace('/editor');
+    window.electron.window.setTitle('New File');
   };
 
   const handleOpen = async () => {
@@ -26,6 +27,7 @@ const StartPage: React.FC = () => {
           console.log('file:', resp.data);
           dispatch(updateWorkSpace(resp.data));
           history.replace('/editor');
+          window.electron.window.setTitle(resp.data.fileName);
         } else {
           console.warn(resp);
         }

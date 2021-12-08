@@ -16,6 +16,7 @@ export default class IpcService {
   init() {
     this.initDialogHandler();
     this.initFileHandler();
+    this.initWindowHandler();
   }
 
   private initDialogHandler() {
@@ -43,6 +44,12 @@ export default class IpcService {
           }
         });
       }
+    });
+  }
+
+  private initWindowHandler() {
+    ipcMain.on('window:title', (event, title) => {
+      this.mainWindow.setTitle(title);
     });
   }
 }

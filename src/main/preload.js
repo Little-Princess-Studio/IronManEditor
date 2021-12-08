@@ -22,4 +22,9 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('file:read', filepath);
     },
   },
+  window: {
+    setTitle(title) {
+      ipcRenderer.send('window:title', title);
+    }
+  }
 });

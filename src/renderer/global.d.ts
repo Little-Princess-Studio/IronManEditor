@@ -11,6 +11,9 @@ declare interface Window {
       on(channel: string, func: (res: any) => void): void;
       once(channel: string, func: (res: any) => void): void;
     };
+    window: {
+      setTitle(title: string): void;
+    }
   };
 }
 
