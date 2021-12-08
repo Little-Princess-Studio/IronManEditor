@@ -1,5 +1,5 @@
 const EditorPage: React.FC = () => {
-  return <div />;
+  return <div className="full-screen" />;
 };
 
 export default EditorPage;

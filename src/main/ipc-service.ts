@@ -1,5 +1,6 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import fs from 'fs';
+import path from 'path';
 
 const wrapIpcResponse = (data: any, success = true) => {
   return { success, data };
@@ -38,7 +39,7 @@ export default class IpcService {
           if (err) {
             event.sender.send('file:read:result', wrapIpcResponse({ name: err.name, message: err.message, code: err.code }, false));
           } else {
-            event.sender.send('file:read:result', wrapIpcResponse(data));
+            event.sender.send('file:read:result', wrapIpcResponse({ fileName: path.basename(filepath), filePath: filepath, fileData: data }));
           }
         });
       }

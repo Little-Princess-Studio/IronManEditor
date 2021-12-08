@@ -1,11 +1,15 @@
 import { useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { updateWorkSpace } from '../../store/reducers/workspace';
 import './index.less';
 
 const StartPage: React.FC = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const handleCreate = () => {
-    // TODO:
+    dispatch(updateWorkSpace({ fileName: 'New File' }));
+    history.replace('/editor');
   };
 
   const handleOpen = async () => {
@@ -20,6 +24,7 @@ const StartPage: React.FC = () => {
       window.electron.ipcRenderer.once('file:read:result', (resp: IpcResponse) => {
         if (resp.success) {
           console.log('file:', resp.data);
+          dispatch(updateWorkSpace(resp.data));
           history.replace('/editor');
         } else {
           console.warn(resp);
@@ -31,7 +36,7 @@ const StartPage: React.FC = () => {
   };
 
   return (
-    <div className="start-page-container flex-center">
+    <div className="full-screen start-page-container flex-center">
       <div className="start-page-section-wrap">
         <div className="start-page-section">
           <h3>启动</h3>

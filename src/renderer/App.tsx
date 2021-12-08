@@ -8,7 +8,7 @@ export default function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={StartPage} />
+        <Route exact path="/" component={StartPage} />
         <Route path="/editor" component={EditorPage} />
       </Switch>
     </Router>
