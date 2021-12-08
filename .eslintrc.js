@@ -10,6 +10,7 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 'off',
     'class-methods-use-this': 'off',
     'no-console': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

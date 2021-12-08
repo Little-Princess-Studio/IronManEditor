@@ -1,6 +1,6 @@
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
-import './reset.css';
-import './global.less';
+import './assets/reset.css';
+import './assets/global.less';
 import StartPage from './pages/StartPage';
 import EditorPage from './pages/EditorPage';
 
