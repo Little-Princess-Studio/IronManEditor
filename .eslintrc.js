@@ -11,6 +11,8 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-console': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    'no-restricted-globals': 'warn',
+    'object-shorthand': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,

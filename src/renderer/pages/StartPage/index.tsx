@@ -42,10 +42,10 @@ const StartPage: React.FC = () => {
       <div className="start-page-section-wrap">
         <div className="start-page-section">
           <h3>启动</h3>
-          <div className="start-btn" onClick={handleCreate}>
+          <div className="start-btn ellipsis" onClick={handleCreate}>
             新建文件...
           </div>
-          <div className="start-btn" onClick={handleOpen}>
+          <div className="start-btn ellipsis" onClick={handleOpen}>
             打开文件...
           </div>
         </div>
