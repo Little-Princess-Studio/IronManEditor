@@ -1,14 +1,39 @@
 .editor-container {
   display: flex;
   flex-direction: row;
+  overflow: hidden;
+  height: 100vh;
 
-  .editor-split-left {
-    flex: 1;
-    height: 100vh;
+  .editor-panel {
+    position: relative;
+    height: 100%;
   }
 
-  .editor-split-right {
+  .editor-panel-left {
     flex: 1;
-    height: 100vh;
+  }
+
+  .editor-panel-right {
+    width: 40%;
+    min-width: 150px;
+  }
+
+  .h-resizer {
+    height: 100%;
+    width: 6px;
+    background: #eee;
+    cursor: ew-resize;
+    z-index: 100;
+  }
+
+  &.monaco-only {
+    .h-resizer {
+      display: none;
+    }
+
+    .editor-panel-right {
+      flex: 1;
+      width: 100% !important;
+    }
   }
 }

@@ -13,6 +13,7 @@ module.exports = {
     '@typescript-eslint/ban-ts-comment': 'off',
     'no-restricted-globals': 'warn',
     'object-shorthand': 'warn',
+    'consistent-return': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

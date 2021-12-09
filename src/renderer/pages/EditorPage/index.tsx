@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import JSON5 from 'json5';
 import ScriptEditor from './ScriptEditor';
@@ -10,6 +10,8 @@ const EditorPage: React.FC = () => {
   const { fileData } = useSelector<any, { fileData: string; filePath: string }>((state) => state.workspace);
   const [scriptEditing, setScriptEditing] = useState(false);
   const [scriptData, setScriptData] = useState({});
+  const resizerRef = useRef<HTMLDivElement>(null);
+  const panelRightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try {
@@ -27,15 +29,60 @@ const EditorPage: React.FC = () => {
     }
   }, [fileData]);
 
+  useEffect(() => {
+    const resizer = resizerRef.current;
+
+    if (!resizer) {
+      return;
+    }
+
+    let resizing = false;
+
+    const onMouseDown = () => {
+      resizing = true;
+    };
+
+    const onMouseMove = (e: MouseEvent) => {
+      if (!resizing) {
+        return;
+      }
+
+      const panelRight = panelRightRef.current;
+
+      if (!panelRight) {
+        return;
+      }
+
+      requestAnimationFrame(() => {
+        panelRight.style.width = `${window.innerWidth - e.pageX}px`;
+        emitter.emit('editor:resize');
+      });
+    };
+
+    const onMouseUp = () => {
+      resizing = false;
+    };
+
+    resizer.addEventListener('mousedown', onMouseDown);
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+
+    return () => {
+      resizer.removeEventListener('mousedown', onMouseDown);
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
   return (
-    <div className="full-screen editor-container">
+    <div className={`full-screen editor-container ${scriptEditing ? '' : 'monaco-only'}`}>
       {scriptEditing && (
-        <div className="editor-split-left">
+        <div className="editor-panel editor-panel-left">
           <ScriptEditor data={scriptData} />
         </div>
       )}
-      {/* TODO: divider */}
-      <div className="editor-split-right">
+      <div className="h-resizer" ref={resizerRef} />
+      <div className="editor-panel editor-panel-right" ref={panelRightRef}>
         <MonacoEditor />
       </div>
     </div>

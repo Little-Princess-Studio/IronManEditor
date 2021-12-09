@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as monaco from 'monaco-editor';
-import throttle from 'lodash/throttle';
 import emitter from '../../../helpers/emitter';
 
 const workerSuffix = process.env.NODE_ENV === 'development' ? '.dev' : '';
@@ -56,9 +55,9 @@ const MonacoEditor = () => {
   }, [fileData, filePath]);
 
   useEffect(() => {
-    const onResize = throttle(() => {
+    const onResize = () => {
       editorRef.current?.layout();
-    }, 16);
+    };
 
     emitter.on('editor:resize', onResize);
     window.addEventListener('resize', onResize);
