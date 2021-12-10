@@ -1,10 +1,23 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 import fs from 'fs';
 import path from 'path';
+import fsWatcher from './fs-watcher';
 
 const wrapIpcResponse = (data: any, success = true) => {
   return { success, data };
 };
+
+export function readFile(filepath: string, callback: (res: any) => void) {
+  if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
+    fs.readFile(filepath, { encoding: 'utf8' }, (err, data) => {
+      if (err) {
+        callback(wrapIpcResponse({ name: err.name, message: err.message, code: err.code }, false));
+      } else {
+        callback(wrapIpcResponse({ fileName: path.basename(filepath), filePath: filepath, fileData: data }));
+      }
+    });
+  }
+}
 
 export default class IpcService {
   readonly mainWindow: BrowserWindow;
@@ -35,15 +48,13 @@ export default class IpcService {
     ipcMain.on('file:read', (event, filepath) => {
       console.log('filepath:', filepath);
 
-      if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
-        fs.readFile(filepath, { encoding: 'utf8' }, (err, data) => {
-          if (err) {
-            event.sender.send('file:read:result', wrapIpcResponse({ name: err.name, message: err.message, code: err.code }, false));
-          } else {
-            event.sender.send('file:read:result', wrapIpcResponse({ fileName: path.basename(filepath), filePath: filepath, fileData: data }));
-          }
-        });
-      }
+      readFile(filepath, (res) => {
+        event.sender.send('file:read:result', res);
+      });
+    });
+
+    ipcMain.on('file:watch', (event, filepath: string) => {
+      fsWatcher.add(filepath);
     });
   }
 

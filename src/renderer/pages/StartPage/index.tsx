@@ -27,6 +27,7 @@ const StartPage: React.FC = () => {
           console.log('file:', resp.data);
           dispatch(updateWorkSpace(resp.data));
           history.replace('/editor');
+          window.electron.file.watchFile(filePath);
           window.electron.window.setTitle(resp.data.fileName);
         } else {
           console.warn(resp);

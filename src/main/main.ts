@@ -16,7 +16,8 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import IpcService from './ipc-service';
+import IpcService, { readFile } from './ipc-service';
+import fsWatcher from './fs-watcher';
 
 export default class AppUpdater {
   constructor() {
@@ -39,8 +40,7 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDevelopment = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDevelopment) {
   require('electron-debug')();
@@ -64,9 +64,7 @@ const createWindow = async () => {
     await installExtensions();
   }
 
-  const RESOURCES_PATH = app.isPackaged
-    ? path.join(process.resourcesPath, 'assets')
-    : path.join(__dirname, '../../assets');
+  const RESOURCES_PATH = app.isPackaged ? path.join(process.resourcesPath, 'assets') : path.join(__dirname, '../../assets');
 
   const getAssetPath = (...paths: string[]): string => {
     return path.join(RESOURCES_PATH, ...paths);
@@ -86,6 +84,12 @@ const createWindow = async () => {
 
   const ipcService = new IpcService(mainWindow);
   ipcService.init();
+
+  fsWatcher.on('change', (filepath) => {
+    readFile(filepath, (res) => {
+      mainWindow?.webContents.send('file:change', res);
+    });
+  });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -128,6 +132,12 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+app.on('will-quit', () => {
+  fsWatcher.close().catch((err) => {
+    console.warn('[FSWatcher] > close meet error', err);
+  });
 });
 
 app

@@ -30,6 +30,14 @@ const EditorPage: React.FC = () => {
   }, [fileData]);
 
   useEffect(() => {
+    window.electron.ipcRenderer.on('file:change', (result) => {
+      console.log('===file change===', result);
+
+      // TODO: handle file change
+    });
+  }, []);
+
+  useEffect(() => {
     const resizer = resizerRef.current;
 
     if (!resizer) {

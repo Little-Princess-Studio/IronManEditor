@@ -1,3 +1,5 @@
+type IpcChannel = 'file:read:result' | 'file:change';
+
 declare interface Window {
   electron: {
     dialog: {
@@ -6,14 +8,15 @@ declare interface Window {
     };
     file: {
       readFile(filepath: string): void;
+      watchFile(filepath: string): void;
     };
     ipcRenderer: {
-      on(channel: string, func: (res: any) => void): void;
-      once(channel: string, func: (res: any) => void): void;
+      on(channel: IpcChannel, func: (res: any) => void): void;
+      once(channel: IpcChannel, func: (res: any) => void): void;
     };
     window: {
       setTitle(title: string): void;
-    }
+    };
   };
 }
 

@@ -21,10 +21,13 @@ contextBridge.exposeInMainWorld('electron', {
     readFile(filepath) {
       ipcRenderer.send('file:read', filepath);
     },
+    watchFile(filepath: string) {
+      ipcRenderer.send('file:watch', filepath);
+    },
   },
   window: {
     setTitle(title) {
       ipcRenderer.send('window:title', title);
-    }
-  }
+    },
+  },
 });
