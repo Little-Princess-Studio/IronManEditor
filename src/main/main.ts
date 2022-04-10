@@ -11,12 +11,12 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import IpcService, { readFile } from './ipc-service';
+import IpcService from './ipc-service';
 import fsWatcher from './fs-watcher';
 
 export default class AppUpdater {
@@ -28,12 +28,6 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
-ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -85,12 +79,6 @@ const createWindow = async () => {
   const ipcService = new IpcService(mainWindow);
   ipcService.init();
 
-  fsWatcher.on('change', (filepath) => {
-    readFile(filepath, (res) => {
-      mainWindow?.webContents.send('file:change', res);
-    });
-  });
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
@@ -105,6 +93,7 @@ const createWindow = async () => {
   });
 
   mainWindow.on('closed', () => {
+    ipcService.destroy();
     mainWindow = null;
   });
 

@@ -32,6 +32,10 @@ export default class IpcService {
     this.initWindowHandler();
   }
 
+  destroy() {
+    ipcMain.removeAllListeners();
+  }
+
   private initDialogHandler() {
     ipcMain.handle('dialog:open', async (event, arg) => {
       const result = await dialog.showOpenDialog(arg);
@@ -55,6 +59,12 @@ export default class IpcService {
 
     ipcMain.on('file:watch', (event, filepath: string) => {
       fsWatcher.add(filepath);
+    });
+
+    fsWatcher.on('change', (filepath) => {
+      readFile(filepath, (res) => {
+        this.mainWindow?.webContents.send('file:change', res);
+      });
     });
   }
 
