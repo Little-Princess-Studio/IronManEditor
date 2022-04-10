@@ -34,6 +34,7 @@ export default class IpcService {
 
   destroy() {
     ipcMain.removeAllListeners();
+    fsWatcher.removeAllListeners();
   }
 
   private initDialogHandler() {
