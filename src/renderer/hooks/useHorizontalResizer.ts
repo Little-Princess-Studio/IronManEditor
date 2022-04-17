@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import emitter from '../helpers/emitter';
 
 const useHorizontalResizer = <O extends HTMLElement = HTMLElement, P extends HTMLElement = HTMLElement, Q extends HTMLElement = HTMLElement>() => {
   const ref = useRef<O>(null);
@@ -20,6 +21,8 @@ const useHorizontalResizer = <O extends HTMLElement = HTMLElement, P extends HTM
       dx = e.clientX;
       leftWidth = leftChild.current?.offsetWidth || 0;
       rightWidth = rightChild.current?.offsetWidth || 0;
+
+      return false;
     };
 
     const onMouseMove = (e: MouseEvent) => {
@@ -40,15 +43,13 @@ const useHorizontalResizer = <O extends HTMLElement = HTMLElement, P extends HTM
             rightChild.current.style.width = `${rightWidth - diff}px`;
           }
           painting = false;
+          emitter.emit('editor:resize');
         });
       }
     };
 
     const onMouseUp = () => {
       resizing = false;
-      dx = 0;
-      leftWidth = 0;
-      rightWidth = 0;
     };
 
     resizer.addEventListener('mousedown', onMouseDown);
