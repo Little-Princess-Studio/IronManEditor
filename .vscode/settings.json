@@ -19,5 +19,19 @@
     "test/**/__snapshots__": true,
     "package-lock.json": true,
     "*.{css,sass,scss,less}.d.ts": true
-  }
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "release": false,
+    "assets": true,
+    ".husky": true,
+    ".github": true,
+    "src/__tests__": true
+  },
+  "explorerExclude.backup": null
 }

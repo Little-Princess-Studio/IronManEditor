@@ -18,6 +18,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-console': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    'no-param-reassign': 'warn',
     'no-restricted-globals': 'warn',
     'object-shorthand': 'warn',
     'consistent-return': 'off',
