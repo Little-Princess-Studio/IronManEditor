@@ -83,13 +83,14 @@ export default merge(baseConfig, {
               importLoaders: 1,
             },
           },
+          'postcss-loader',
           'less-loader'
         ],
         include: /\.module\.(le|c)ss$/,
       },
       {
         test: /\.(le|c)ss$/,
-        use: ['style-loader', 'css-loader', 'less-loader'],
+        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'],
         exclude: /\.module\.(le|c)ss$/,
       },
       // Fonts
