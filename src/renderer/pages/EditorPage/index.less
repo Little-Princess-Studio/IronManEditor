@@ -1,39 +1,17 @@
-.editor-container {
+.editor-root {
   display: flex;
   flex-direction: row;
   overflow: hidden;
   height: 100vh;
+  background-color: #eee;
 
-  .editor-panel {
-    position: relative;
-    height: 100%;
+  .composite-bar {
+    width: 200px;
+    background-color: rgba(223, 223, 223, 0.4);
   }
 
-  .editor-panel-left {
-    flex: 1;
-  }
-
-  .editor-panel-right {
-    width: 40%;
-    min-width: 150px;
-  }
-
-  .h-resizer {
-    height: 100%;
-    width: 6px;
-    background: #eee;
-    cursor: ew-resize;
-    z-index: 100;
-  }
-
-  &.monaco-only {
-    .h-resizer {
-      display: none;
-    }
-
-    .editor-panel-right {
-      flex: 1;
-      width: 100% !important;
-    }
+  .explorer-folders-view {
+    width: 320px;
+    background-color: rgba(255, 255, 255, 0.19);
   }
 }
