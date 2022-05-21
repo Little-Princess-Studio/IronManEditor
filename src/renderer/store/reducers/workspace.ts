@@ -4,12 +4,14 @@ interface IState {
   fileName: string;
   filePath: string;
   fileData: string;
+  isDir: boolean;
 }
 
 const INIT_STATE: IState = {
   fileName: '',
   filePath: '',
   fileData: '',
+  isDir: false,
 };
 
 export const workspaceSlice = createSlice({

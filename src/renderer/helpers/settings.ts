@@ -1,4 +1,4 @@
-export type IRecentProject = { name: string; path: string };
+export type IRecentProject = { name: string; path: string; isDir?: boolean };
 
 class Settings {
   static RECENT_PROJ_KEY = 'recent-projects';

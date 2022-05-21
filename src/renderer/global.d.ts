@@ -1,4 +1,4 @@
-type IpcChannel = 'file:read:result' | 'file:change';
+type IpcChannel = 'file:read:result' | 'folder:read:result' | 'file:change';
 
 declare interface Window {
   electron: {
@@ -8,6 +8,7 @@ declare interface Window {
     };
     file: {
       readFile(filepath: string): void;
+      readFolder(folderpath: string): void;
       watchFile(filepath: string): void;
     };
     ipcRenderer: {

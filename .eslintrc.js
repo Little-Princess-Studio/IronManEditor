@@ -22,6 +22,7 @@ module.exports = {
     'no-restricted-globals': 'warn',
     'object-shorthand': 'warn',
     'consistent-return': 'off',
+    'prefer-promise-reject-errors': 'off',
   },
   parserOptions: {
     ecmaVersion: 2020,

@@ -1,23 +1,35 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
-import fs from 'fs';
-import path from 'path';
+import { existsSync, statSync } from 'fs';
+import fsPromises from 'fs/promises';
+import PathUtil from 'path';
 import fsWatcher from './fs-watcher';
 
 const wrapIpcResponse = (data: any, success = true) => {
   return { success, data };
 };
 
-export function readFile(filepath: string, callback: (res: any) => void) {
-  if (fs.existsSync(filepath) && fs.statSync(filepath).isFile()) {
-    fs.readFile(filepath, { encoding: 'utf8' }, (err, data) => {
-      if (err) {
-        callback(wrapIpcResponse({ name: err.name, message: err.message, code: err.code }, false));
-      } else {
-        callback(wrapIpcResponse({ fileName: path.basename(filepath), filePath: filepath, fileData: data }));
-      }
-    });
+export const readFileOrFolder = async (path: string): Promise<any> => {
+  if (!existsSync(path)) {
+    throw new Error('Path Not Exists');
   }
-}
+
+  try {
+    if (statSync(path).isFile()) {
+      const content = await fsPromises.readFile(path);
+      return { fileName: PathUtil.basename(path), filePath: path, fileData: content, isDir: false };
+    }
+
+    if (statSync(path).isDirectory()) {
+      const files = await fsPromises.readdir(path);
+      return { fileName: PathUtil.basename(path), filePath: path, fileData: files, isDir: true };
+    }
+
+    throw new Error('Path Not Support');
+  } catch (err) {
+    console.log(err);
+    throw err;
+  }
+};
 
 export default class IpcService {
   readonly mainWindow: BrowserWindow;
@@ -50,22 +62,39 @@ export default class IpcService {
   }
 
   private initFileHandler() {
-    ipcMain.on('file:read', (event, filepath) => {
+    ipcMain.on('file:read', async (event, filepath) => {
       console.log('filepath:', filepath);
 
-      readFile(filepath, (res) => {
-        event.sender.send('file:read:result', res);
-      });
+      const res = await readFileOrFolder(filepath)
+        .then((value) => {
+          return wrapIpcResponse(value, true);
+        })
+        .catch((err) => wrapIpcResponse(err, false));
+      event.sender.send('file:read:result', res);
+    });
+
+    ipcMain.on('folder:read', async (event, folderpath) => {
+      console.log('folderpath:', folderpath);
+
+      const res = await readFileOrFolder(folderpath)
+        .then((value) => {
+          return wrapIpcResponse(value, true);
+        })
+        .catch((err) => wrapIpcResponse(err, false));
+      event.sender.send('folder:read:result', res);
     });
 
     ipcMain.on('file:watch', (event, filepath: string) => {
       fsWatcher.add(filepath);
     });
 
-    fsWatcher.on('change', (filepath) => {
-      readFile(filepath, (res) => {
-        this.mainWindow?.webContents.send('file:change', res);
-      });
+    fsWatcher.on('change', async (filepath) => {
+      const res = await readFileOrFolder(filepath)
+        .then((value) => {
+          return wrapIpcResponse(value, true);
+        })
+        .catch((err) => wrapIpcResponse(err, false));
+      this.mainWindow?.webContents.send('file:change', res);
     });
   }
 

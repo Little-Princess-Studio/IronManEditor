@@ -34,8 +34,27 @@ const StartPage: React.FC = () => {
     window.electron.file.readFile(filePath);
   };
 
+  const openProjectFolder = (folderPath: string) => {
+    window.electron.ipcRenderer.once('folder:read:result', (resp: IpcResponse) => {
+      if (resp.success) {
+        console.log('folder:', resp.data);
+        dispatch(updateWorkSpace(resp.data));
+        history.replace('/editor');
+        // TODO:
+        window.electron.window.setTitle(`${resp.data.fileName} - ${folderPath}`);
+
+        settings.registerProject({ name: resp.data.fileName, path: folderPath, isDir: true });
+      } else {
+        console.warn(resp);
+      }
+    });
+
+    window.electron.file.readFolder(folderPath);
+  };
+
   const handleOpen = async () => {
     const res = await window.electron.dialog.showOpenDialog({
+      title: '打开文件',
       filters: [{ name: 'Files', extensions: ['json', 'json5'] }],
       properties: ['openFile'],
     });
@@ -43,6 +62,17 @@ const StartPage: React.FC = () => {
     if (!res.canceled && res.filePaths.length > 0) {
       const filePath = res.filePaths[0];
       openProject(filePath);
+    }
+  };
+
+  const handleOpenFolder = async () => {
+    const res = await window.electron.dialog.showOpenDialog({
+      title: '打开文件夹',
+      properties: ['openFile', 'openDirectory'],
+    });
+
+    if (!res.canceled && res.filePaths.length > 0) {
+      openProjectFolder(res.filePaths[0]);
     }
   };
 
@@ -56,6 +86,9 @@ const StartPage: React.FC = () => {
           </div>
           <div className="start-btn ellipsis" onClick={handleOpen}>
             打开文件...
+          </div>
+          <div className="start-btn ellipsis" onClick={handleOpenFolder}>
+            打开文件夹...
           </div>
         </div>
         <div className="start-page-section">
