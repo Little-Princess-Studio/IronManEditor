@@ -19,10 +19,10 @@ contextBridge.exposeInMainWorld('electron', {
   },
   file: {
     readFile(filepath) {
-      ipcRenderer.send('file:read', filepath);
+      return ipcRenderer.invoke('file:read', filepath);
     },
     readFolder(folderpath) {
-      ipcRenderer.send('folder:read', folderpath);
+      return ipcRenderer.invoke('folder:read', folderpath);
     },
     watchFile(filepath) {
       ipcRenderer.send('file:watch', filepath);

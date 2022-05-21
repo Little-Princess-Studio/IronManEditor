@@ -15,7 +15,7 @@ export const readFileOrFolder = async (path: string): Promise<any> => {
 
   try {
     if (statSync(path).isFile()) {
-      const content = await fsPromises.readFile(path);
+      const content = await fsPromises.readFile(path, { encoding: 'utf8' });
       return { fileName: PathUtil.basename(path), filePath: path, fileData: content, isDir: false };
     }
 
@@ -62,26 +62,18 @@ export default class IpcService {
   }
 
   private initFileHandler() {
-    ipcMain.on('file:read', async (event, filepath) => {
-      console.log('filepath:', filepath);
+    ['file:read', 'folder:read'].forEach((key) => {
+      ipcMain.handle(key, async (event, path) => {
+        console.log('read file:', path);
 
-      const res = await readFileOrFolder(filepath)
-        .then((value) => {
-          return wrapIpcResponse(value, true);
-        })
-        .catch((err) => wrapIpcResponse(err, false));
-      event.sender.send('file:read:result', res);
-    });
+        const res = await readFileOrFolder(path)
+          .then((value) => {
+            return wrapIpcResponse(value, true);
+          })
+          .catch((err) => wrapIpcResponse(err, false));
 
-    ipcMain.on('folder:read', async (event, folderpath) => {
-      console.log('folderpath:', folderpath);
-
-      const res = await readFileOrFolder(folderpath)
-        .then((value) => {
-          return wrapIpcResponse(value, true);
-        })
-        .catch((err) => wrapIpcResponse(err, false));
-      event.sender.send('folder:read:result', res);
+        return res;
+      });
     });
 
     ipcMain.on('file:watch', (event, filepath: string) => {

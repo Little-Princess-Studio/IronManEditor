@@ -16,40 +16,36 @@ const StartPage: React.FC = () => {
     window.electron.window.setTitle('New File');
   };
 
-  const openProject = (filePath: string) => {
-    window.electron.ipcRenderer.once('file:read:result', (resp: IpcResponse) => {
-      if (resp.success) {
-        console.log('file:', resp.data);
-        dispatch(updateWorkSpace(resp.data));
-        history.replace('/editor');
-        window.electron.file.watchFile(filePath);
-        window.electron.window.setTitle(resp.data.fileName);
+  const openProject = async (filePath: string) => {
+    const resp = await window.electron.file.readFile(filePath);
 
-        settings.registerProject({ name: resp.data.fileName, path: filePath });
-      } else {
-        console.warn(resp);
-      }
-    });
+    if (resp.success) {
+      console.log('file:', resp.data);
+      dispatch(updateWorkSpace(resp.data));
+      history.replace('/editor');
+      window.electron.file.watchFile(filePath);
+      window.electron.window.setTitle(resp.data.fileName);
 
-    window.electron.file.readFile(filePath);
+      settings.registerProject({ name: resp.data.fileName, path: filePath });
+    } else {
+      console.warn(resp);
+    }
   };
 
-  const openProjectFolder = (folderPath: string) => {
-    window.electron.ipcRenderer.once('folder:read:result', (resp: IpcResponse) => {
-      if (resp.success) {
-        console.log('folder:', resp.data);
-        dispatch(updateWorkSpace(resp.data));
-        history.replace('/editor');
-        // TODO:
-        window.electron.window.setTitle(`${resp.data.fileName} - ${folderPath}`);
+  const openProjectFolder = async (folderPath: string) => {
+    const resp = await window.electron.file.readFolder(folderPath);
 
-        settings.registerProject({ name: resp.data.fileName, path: folderPath, isDir: true });
-      } else {
-        console.warn(resp);
-      }
-    });
+    if (resp.success) {
+      console.log('folder:', resp.data);
+      dispatch(updateWorkSpace(resp.data));
+      history.replace('/editor');
+      // TODO:
+      window.electron.window.setTitle(`${resp.data.fileName} - ${folderPath}`);
 
-    window.electron.file.readFolder(folderPath);
+      settings.registerProject({ name: resp.data.fileName, path: folderPath, isDir: true });
+    } else {
+      console.warn(resp);
+    }
   };
 
   const handleOpen = async () => {

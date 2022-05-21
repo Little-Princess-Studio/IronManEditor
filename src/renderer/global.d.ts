@@ -1,4 +1,4 @@
-type IpcChannel = 'file:read:result' | 'folder:read:result' | 'file:change';
+type IpcChannel = 'file:change';
 
 declare interface Window {
   electron: {
@@ -7,8 +7,8 @@ declare interface Window {
       showSaveDialog(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     };
     file: {
-      readFile(filepath: string): void;
-      readFolder(folderpath: string): void;
+      readFile(filepath: string): Promise<IpcResponse>;
+      readFolder(folderpath: string): Promise<IpcResponse>;
       watchFile(filepath: string): void;
     };
     ipcRenderer: {
