@@ -16,7 +16,7 @@ class Settings {
           recentProjects = [];
         }
       } catch (err) {
-        console.log(err);
+        console.warn(err);
         recentProjects = [];
       }
 

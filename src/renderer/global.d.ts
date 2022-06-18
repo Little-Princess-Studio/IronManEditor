@@ -11,6 +11,9 @@ declare interface Window {
       readFolder(folderPath: string): Promise<IpcResponse>;
       watchFile(filepath: string): void;
     };
+    path: {
+      isDirectory(path: string): Promise<boolean>;
+    };
     ipcRenderer: {
       on(channel: IpcChannel, func: (res: any) => void): void;
       once(channel: IpcChannel, func: (res: any) => void): void;

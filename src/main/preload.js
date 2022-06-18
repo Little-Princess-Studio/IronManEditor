@@ -28,6 +28,11 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('file:watch', filepath);
     },
   },
+  path: {
+    isDirectory(path) {
+      return ipcRenderer.invoke('path:isDirectory', path);
+    },
+  },
   window: {
     setTitle(title) {
       ipcRenderer.send('window:title', title);

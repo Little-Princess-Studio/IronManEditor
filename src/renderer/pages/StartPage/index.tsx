@@ -112,6 +112,22 @@ const StartPage: React.FC = () => {
     }
   };
 
+  const tryOpenProject = async (path: string) => {
+    try {
+      const isDir = await window.electron.path.isDirectory(path);
+
+      console.log(`isDir(${path}): ${isDir}`);
+
+      if (isDir) {
+        openProjectFolder(path);
+      } else {
+        openProject(path);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="full-screen start-page-container flex-center">
       <div className="start-page-section-wrap">
@@ -132,12 +148,7 @@ const StartPage: React.FC = () => {
           {projects.length === 0 && <div className="recent-project-item ellipsis">你最近没有使用的文件/文件夹</div>}
           {projects.map((it) => (
             <div className="recent-project-item ellipsis" key={it.path}>
-              <button
-                type="button"
-                className="recent-project-name"
-                title={it.path}
-                onClick={() => (it.isDir ? openProjectFolder(it.path) : openProject(it.path))}
-              >
+              <button type="button" className="recent-project-name" title={it.path} onClick={() => tryOpenProject(it.path)}>
                 {it.name}
               </button>
               <span className="recent-project-path" title={it.path}>

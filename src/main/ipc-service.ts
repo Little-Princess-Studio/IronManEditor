@@ -41,6 +41,7 @@ export default class IpcService {
   init() {
     this.initDialogHandler();
     this.initFileHandler();
+    this.initPathHandler();
     this.initWindowHandler();
   }
 
@@ -87,6 +88,16 @@ export default class IpcService {
         })
         .catch((err) => wrapIpcResponse(err, false));
       this.mainWindow?.webContents.send('file:change', res);
+    });
+  }
+
+  private initPathHandler() {
+    ipcMain.handle('path:isDirectory', async (event, arg) => {
+      if (!existsSync(arg)) {
+        return Promise.reject('path not exists');
+      }
+
+      return statSync(arg).isDirectory();
     });
   }
 
