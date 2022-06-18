@@ -35,6 +35,11 @@ class Settings {
 
     localStorage.setItem(Settings.RECENT_PROJ_KEY, JSON.stringify(this.recentProjects));
   }
+
+  public unregisterProject(project: IRecentProject) {
+    this.recentProjects = this.recentProjects.filter((it) => it !== project);
+    localStorage.setItem(Settings.RECENT_PROJ_KEY, JSON.stringify(this.recentProjects));
+  }
 }
 
 const settings = new Settings();

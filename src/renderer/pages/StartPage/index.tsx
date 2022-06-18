@@ -1,14 +1,14 @@
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateWorkSpace } from '@renderer/store/reducers/workspace';
-import settings from '@renderer/helpers/settings';
+import settings, { IRecentProject } from '@renderer/helpers/settings';
 import './index.less';
 
 const StartPage: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-
-  const projects = settings.recentProjects.slice(0, 5);
+  const [projects, setProjects] = useState(settings.recentProjects.slice(0, 5));
 
   const handleCreate = () => {
     dispatch(updateWorkSpace({ fileName: 'New File' }));
@@ -46,6 +46,11 @@ const StartPage: React.FC = () => {
     } else {
       console.warn(resp);
     }
+  };
+
+  const removeProject = (it: IRecentProject) => {
+    settings.unregisterProject(it);
+    setProjects(settings.recentProjects.slice(0, 5));
   };
 
   const handleOpen = async () => {
@@ -87,8 +92,9 @@ const StartPage: React.FC = () => {
             打开文件夹...
           </div>
         </div>
-        <div className="start-page-section">
+        <div className="start-page-section" style={{ width: 380 }}>
           <h3>最近</h3>
+          {projects.length === 0 && <div className="recent-project-item ellipsis">你最近没有使用的文件/文件夹</div>}
           {projects.map((it) => (
             <div className="recent-project-item ellipsis" key={it.path}>
               <button type="button" className="recent-project-name" title={it.path} onClick={() => openProject(it.path)}>
@@ -97,6 +103,7 @@ const StartPage: React.FC = () => {
               <span className="recent-project-path" title={it.path}>
                 {it.path}
               </span>
+              <i className="recent-project-close select-none cursor-pointer" onClick={() => removeProject(it)} />
             </div>
           ))}
         </div>
