@@ -21,8 +21,8 @@ contextBridge.exposeInMainWorld('electron', {
     readFile(filepath) {
       return ipcRenderer.invoke('file:read', filepath);
     },
-    readFolder(folderpath) {
-      return ipcRenderer.invoke('folder:read', folderpath);
+    readFolder(folderPath) {
+      return ipcRenderer.invoke('folder:read', folderPath);
     },
     watchFile(filepath) {
       ipcRenderer.send('file:watch', filepath);

@@ -8,7 +8,7 @@ declare interface Window {
     };
     file: {
       readFile(filepath: string): Promise<IpcResponse>;
-      readFolder(folderpath: string): Promise<IpcResponse>;
+      readFolder(folderPath: string): Promise<IpcResponse>;
       watchFile(filepath: string): void;
     };
     ipcRenderer: {

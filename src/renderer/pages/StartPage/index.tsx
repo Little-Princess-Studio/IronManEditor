@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { updateWorkSpace } from '@renderer/store/reducers/workspace';
@@ -10,6 +10,14 @@ const StartPage: React.FC = () => {
   const dispatch = useDispatch();
   const [projects, setProjects] = useState(settings.recentProjects.slice(0, 5));
 
+  const openingFileRef = useRef(false);
+  const openingFolderRef = useRef(false);
+
+  useEffect(() => {
+    window.electron.window.setTitle('IronMan Editor');
+  }, []);
+
+  // FIXME:
   const handleCreate = () => {
     dispatch(updateWorkSpace({ fileName: 'New File' }));
     history.replace('/editor');
@@ -21,12 +29,13 @@ const StartPage: React.FC = () => {
 
     if (resp.success) {
       console.log('file:', resp.data);
-      dispatch(updateWorkSpace(resp.data));
       history.replace('/editor');
-      window.electron.file.watchFile(filePath);
-      window.electron.window.setTitle(resp.data.fileName);
 
-      settings.registerProject({ name: resp.data.fileName, path: filePath });
+      dispatch(updateWorkSpace(resp.data));
+      window.electron.file.watchFile(filePath);
+      window.electron.window.setTitle(`${resp.data.fileName} - ${filePath}`);
+
+      settings.registerProject({ name: resp.data.fileName, path: filePath, isDir: false });
     } else {
       console.warn(resp);
     }
@@ -37,9 +46,9 @@ const StartPage: React.FC = () => {
 
     if (resp.success) {
       console.log('folder:', resp.data);
-      dispatch(updateWorkSpace(resp.data));
       history.replace('/editor');
-      // TODO:
+
+      dispatch(updateWorkSpace(resp.data));
       window.electron.window.setTitle(`${resp.data.fileName} - ${folderPath}`);
 
       settings.registerProject({ name: resp.data.fileName, path: folderPath, isDir: true });
@@ -53,27 +62,53 @@ const StartPage: React.FC = () => {
     setProjects(settings.recentProjects.slice(0, 5));
   };
 
-  const handleOpen = async () => {
-    const res = await window.electron.dialog.showOpenDialog({
-      title: '打开文件',
-      filters: [{ name: 'Files', extensions: ['json', 'json5'] }],
-      properties: ['openFile'],
-    });
+  const handleOpenFile = async () => {
+    // handle fast click
+    if (openingFileRef.current) {
+      return;
+    }
 
-    if (!res.canceled && res.filePaths.length > 0) {
-      const filePath = res.filePaths[0];
-      openProject(filePath);
+    openingFileRef.current = true;
+
+    try {
+      const res = await window.electron.dialog.showOpenDialog({
+        title: '打开文件',
+        filters: [{ name: 'Files', extensions: ['json', 'json5'] }],
+        properties: ['openFile'],
+      });
+
+      if (!res.canceled && res.filePaths.length > 0) {
+        const filePath = res.filePaths[0];
+        await openProject(filePath);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      openingFileRef.current = false;
     }
   };
 
   const handleOpenFolder = async () => {
-    const res = await window.electron.dialog.showOpenDialog({
-      title: '打开文件夹',
-      properties: ['openFile', 'openDirectory'],
-    });
+    // handle fast click
+    if (openingFolderRef.current) {
+      return;
+    }
 
-    if (!res.canceled && res.filePaths.length > 0) {
-      openProjectFolder(res.filePaths[0]);
+    openingFolderRef.current = true;
+
+    try {
+      const res = await window.electron.dialog.showOpenDialog({
+        title: '打开文件夹',
+        properties: ['openFile', 'openDirectory'],
+      });
+
+      if (!res.canceled && res.filePaths.length > 0) {
+        await openProjectFolder(res.filePaths[0]);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      openingFolderRef.current = false;
     }
   };
 
@@ -85,7 +120,7 @@ const StartPage: React.FC = () => {
           <div className="start-btn ellipsis" onClick={handleCreate}>
             新建文件...
           </div>
-          <div className="start-btn ellipsis" onClick={handleOpen}>
+          <div className="start-btn ellipsis" onClick={handleOpenFile}>
             打开文件...
           </div>
           <div className="start-btn ellipsis" onClick={handleOpenFolder}>
@@ -97,7 +132,12 @@ const StartPage: React.FC = () => {
           {projects.length === 0 && <div className="recent-project-item ellipsis">你最近没有使用的文件/文件夹</div>}
           {projects.map((it) => (
             <div className="recent-project-item ellipsis" key={it.path}>
-              <button type="button" className="recent-project-name" title={it.path} onClick={() => openProject(it.path)}>
+              <button
+                type="button"
+                className="recent-project-name"
+                title={it.path}
+                onClick={() => (it.isDir ? openProjectFolder(it.path) : openProject(it.path))}
+              >
                 {it.name}
               </button>
               <span className="recent-project-path" title={it.path}>
