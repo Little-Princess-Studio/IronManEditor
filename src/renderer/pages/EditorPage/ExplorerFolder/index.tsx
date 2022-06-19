@@ -1,14 +1,36 @@
-import React, { useMemo, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@renderer/store/configureStore';
+import { updateWorkSpace } from '@renderer/store/reducers/workspace';
 import { Tree } from 'antd';
-import { DataNode } from 'antd/lib/tree';
+import { DataNode, EventDataNode } from 'antd/lib/tree';
 import 'antd/lib/tree/style';
 import './index.less';
 
 const ExplorerFolder: React.FC = () => {
   const { fileData } = useSelector((state: RootState) => state.workspace);
+  const folderListRef = useRef<{ [path: string]: IFileData }>({});
   const inputRef = useRef<HTMLInputElement>(null);
+  const dispatch = useDispatch();
+
+  const cacheFileData = (list: IFileData[]) => {
+    for (let i = 0, len = list.length; i < len; i++) {
+      const { isDir, path } = list[i];
+      if (!isDir) {
+        continue;
+      }
+
+      if (!folderListRef.current[path]) {
+        folderListRef.current[path] = list[i];
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (fileData.length > 0 && Object.keys(folderListRef.current).length === 0) {
+      cacheFileData(fileData);
+    }
+  }, [fileData]);
 
   const onSearch = (value?: string) => {
     value = value || inputRef.current?.value;
@@ -32,7 +54,6 @@ const ExplorerFolder: React.FC = () => {
         title: it.name,
         key: it.path,
         isLeaf: !it.isDir,
-        data: it,
         children: it.isDir && it.children ? renderTreeNode(it.children) : undefined,
       }));
     };
@@ -40,8 +61,24 @@ const ExplorerFolder: React.FC = () => {
     return renderTreeNode(fileData);
   }, [fileData]);
 
-  const onLoadData = (treeNode) => {
-    // TODO:
+  const onLoadData = async (treeNode: EventDataNode<DataNode>) => {
+    const { key, isLeaf } = treeNode;
+
+    if (!isLeaf) {
+      const resp = await window.electron.file.readFolder(key as string);
+
+      if (resp.success) {
+        folderListRef.current[key].children = resp.data;
+
+        // FIXME: update state
+        dispatch(updateWorkSpace({ fileData: [...fileData] }));
+
+        cacheFileData(resp.data);
+      } else {
+        return Promise.reject(resp);
+      }
+    }
+
     return Promise.resolve();
   };
 

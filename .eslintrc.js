@@ -25,6 +25,7 @@ module.exports = {
     'no-plusplus': 'off',
     'object-shorthand': 'warn',
     'consistent-return': 'off',
+    'prefer-destructuring': 'off',
     'prefer-promise-reject-errors': 'off',
   },
   parserOptions: {
