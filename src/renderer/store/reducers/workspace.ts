@@ -1,13 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-export type IFileData = {
-  name: string;
-  path: string;
-  isDir: boolean;
-  content?: string;
-  children?: IFileData;
-};
-
 interface IState {
   fileName: string;
   filePath: string;

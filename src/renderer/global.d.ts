@@ -7,12 +7,14 @@ declare interface Window {
       showSaveDialog(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
     };
     file: {
-      readFile(filepath: string): Promise<IpcResponse>;
-      readFolder(folderPath: string): Promise<IpcResponse>;
+      readFile(filepath: string): Promise<IpcResponse<IFileData>>;
+      readFolder(folderPath: string): Promise<IpcResponse<IFileData[]>>;
       watchFile(filepath: string): void;
     };
     path: {
       isDirectory(path: string): Promise<boolean>;
+      basename(path: string): string;
+      dirname(path: string): string;
     };
     ipcRenderer: {
       on(channel: IpcChannel, func: (res: any) => void): void;
@@ -24,7 +26,15 @@ declare interface Window {
   };
 }
 
-interface IpcResponse {
-  data: any;
+interface IpcResponse<T = unknown> {
+  data: T;
   success: boolean;
 }
+
+type IFileData = {
+  name: string;
+  path: string;
+  isDir: boolean;
+  content?: string;
+  children?: IFileData;
+};

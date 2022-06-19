@@ -32,6 +32,12 @@ contextBridge.exposeInMainWorld('electron', {
     isDirectory(path) {
       return ipcRenderer.invoke('path:isDirectory', path);
     },
+    basename(path) {
+      return ipcRenderer.invoke('path:basename', path);
+    },
+    dirname(path) {
+      return ipcRenderer.invoke('path:dirname', path);
+    },
   },
   window: {
     setTitle(title) {

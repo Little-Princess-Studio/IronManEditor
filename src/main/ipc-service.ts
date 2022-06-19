@@ -8,7 +8,7 @@ const wrapIpcResponse = (data: any, success = true) => {
   return { success, data };
 };
 
-export const readFileOrFolder = async (path: string): Promise<any> => {
+export const readFileOrFolder = async (path: string): Promise<IFileData | IFileData[]> => {
   if (!existsSync(path)) {
     throw new Error('Path Not Exists');
   }
@@ -16,13 +16,13 @@ export const readFileOrFolder = async (path: string): Promise<any> => {
   try {
     if (statSync(path).isFile()) {
       const content = await fsPromises.readFile(path, { encoding: 'utf8' });
-      return { fileName: PathUtil.basename(path), filePath: path, fileData: [{ name: PathUtil.basename(path), content, isDir: false, path }], isDir: false };
+      return { name: PathUtil.basename(path), path, isDir: false, content };
     }
 
     if (statSync(path).isDirectory()) {
       const files = await fsPromises.readdir(path);
 
-      const fileData = [];
+      const fileData: IFileData[] = [];
 
       for (let i = 0, len = files.length; i < len; i++) {
         const ext = PathUtil.extname(files[i]).toLowerCase();
@@ -46,7 +46,7 @@ export const readFileOrFolder = async (path: string): Promise<any> => {
         });
       }
 
-      return { fileName: PathUtil.basename(path), filePath: path, fileData, isDir: true };
+      return fileData;
     }
 
     throw new Error('Path Not Support');
@@ -124,6 +124,10 @@ export default class IpcService {
 
       return statSync(arg).isDirectory();
     });
+
+    ipcMain.handle('path:basename', (event, path) => PathUtil.basename(path));
+
+    ipcMain.handle('path:dirname', (event, path) => PathUtil.dirname(path));
   }
 
   private initWindowHandler() {
