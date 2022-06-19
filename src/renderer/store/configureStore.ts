@@ -21,4 +21,6 @@ export default function configureStore(preloadedState = {}) {
 
 const store = configureStore();
 
+export type RootState = ReturnType<typeof rootReducer>;
+
 export { store };

@@ -114,8 +114,10 @@ const StartPage: React.FC = () => {
     }
   };
 
-  const tryOpenProject = async (path: string) => {
+  const tryOpenProject = async (it: IRecentProject) => {
     try {
+      const { path } = it;
+
       const isDir = await window.electron.path.isDirectory(path);
 
       console.log(`isDir(${path}): ${isDir}`);
@@ -127,6 +129,8 @@ const StartPage: React.FC = () => {
       }
     } catch (err) {
       console.error(err);
+
+      removeProject(it);
     }
   };
 
@@ -150,7 +154,7 @@ const StartPage: React.FC = () => {
           {projects.length === 0 && <div className="recent-project-item ellipsis">你最近没有使用的文件/文件夹</div>}
           {projects.map((it) => (
             <div className="recent-project-item ellipsis" key={it.path}>
-              <button type="button" className="recent-project-name" title={it.path} onClick={() => tryOpenProject(it.path)}>
+              <button type="button" className="recent-project-name" title={it.path} onClick={() => tryOpenProject(it)}>
                 {it.name}
               </button>
               <span className="recent-project-path" title={it.path}>
