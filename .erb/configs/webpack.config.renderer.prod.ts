@@ -76,7 +76,7 @@ export default merge(baseConfig, {
       },
       {
         test: /\.(le|c)ss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'less-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', { loader: 'less-loader', options: { lessOptions: { javascriptEnabled: true } } }],
         exclude: /\.module\.(le|c)ss$/,
       },
       // Fonts

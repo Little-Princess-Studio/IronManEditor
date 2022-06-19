@@ -90,7 +90,7 @@ export default merge(baseConfig, {
       },
       {
         test: /\.(le|c)ss$/,
-        use: ['style-loader', 'css-loader', 'postcss-loader', 'less-loader'],
+        use: ['style-loader', 'css-loader', 'postcss-loader', { loader: 'less-loader', options: { lessOptions: { javascriptEnabled: true } } }],
         exclude: /\.module\.(le|c)ss$/,
       },
       // Fonts

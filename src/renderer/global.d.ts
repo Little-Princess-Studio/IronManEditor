@@ -36,5 +36,5 @@ type IFileData = {
   path: string;
   isDir: boolean;
   content?: string;
-  children?: IFileData;
+  children?: IFileData[];
 };
