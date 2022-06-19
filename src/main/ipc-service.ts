@@ -1,5 +1,5 @@
 import { BrowserWindow, dialog, ipcMain } from 'electron';
-import { existsSync, statSync } from 'fs';
+import { existsSync, readFileSync, statSync } from 'fs';
 import fsPromises from 'fs/promises';
 import PathUtil from 'path';
 import fsWatcher from './fs-watcher';
@@ -16,12 +16,37 @@ export const readFileOrFolder = async (path: string): Promise<any> => {
   try {
     if (statSync(path).isFile()) {
       const content = await fsPromises.readFile(path, { encoding: 'utf8' });
-      return { fileName: PathUtil.basename(path), filePath: path, fileData: content, isDir: false };
+      return { fileName: PathUtil.basename(path), filePath: path, fileData: [{ name: PathUtil.basename(path), content, isDir: false, path }], isDir: false };
     }
 
     if (statSync(path).isDirectory()) {
       const files = await fsPromises.readdir(path);
-      return { fileName: PathUtil.basename(path), filePath: path, fileData: files, isDir: true };
+
+      const fileData = [];
+
+      for (let i = 0, len = files.length; i < len; i++) {
+        const ext = PathUtil.extname(files[i]).toLowerCase();
+
+        if (ext && ext !== '.json' && ext !== '.json5') {
+          continue;
+        }
+
+        const fullPath = PathUtil.join(path, files[i]);
+        const isDir = statSync(fullPath).isDirectory();
+
+        if (!ext && !isDir) {
+          continue;
+        }
+
+        fileData.push({
+          name: files[i],
+          path: fullPath,
+          isDir,
+          content: isDir ? undefined : readFileSync(fullPath, { encoding: 'utf8' }),
+        });
+      }
+
+      return { fileName: PathUtil.basename(path), filePath: path, fileData, isDir: true };
     }
 
     throw new Error('Path Not Support');

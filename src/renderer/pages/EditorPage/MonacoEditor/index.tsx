@@ -1,7 +1,8 @@
 import { useRef, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import * as monaco from 'monaco-editor';
-import emitter from '../../../helpers/emitter';
+import emitter from '@renderer/helpers/emitter';
+import { IFileData } from '@renderer/store/reducers/workspace';
 
 const workerSuffix = process.env.NODE_ENV === 'development' ? '.dev' : '';
 
@@ -25,7 +26,7 @@ self.MonacoEnvironment = {
 };
 
 const MonacoEditor = () => {
-  const { fileData, filePath } = useSelector<any, { fileData: string; filePath: string }>((state) => state.workspace);
+  const { fileData, filePath } = useSelector<any, { fileData: IFileData[]; filePath: string }>((state) => state.workspace);
   const divEl = useRef<HTMLDivElement>(null);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(null);
 
@@ -35,7 +36,7 @@ const MonacoEditor = () => {
     if (divEl.current) {
       // @ts-ignore
       editorRef.current = monaco.editor.create(divEl.current, {
-        value: fileData,
+        value: fileData?.[0]?.content,
         language,
         mouseWheelZoom: true,
         renderWhitespace: 'all',
