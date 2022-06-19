@@ -13,15 +13,15 @@ declare interface Window {
     };
     path: {
       isDirectory(path: string): Promise<boolean>;
-      basename(path: string): string;
-      dirname(path: string): string;
+      basename(path: string): Promise<string>;
+      dirname(path: string): Promise<string>;
     };
     ipcRenderer: {
       on(channel: IpcChannel, func: (res: any) => void): void;
       once(channel: IpcChannel, func: (res: any) => void): void;
     };
     window: {
-      setTitle(title: string): void;
+      setTitle(title: string): Promise<void>;
     };
   };
 }

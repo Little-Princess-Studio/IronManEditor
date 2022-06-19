@@ -32,7 +32,8 @@ const StartPage: React.FC = () => {
       history.replace('/editor');
 
       const fileName = resp.data.name;
-      dispatch(updateWorkSpace({ workspaceName: fileName, workspaceDir: window.electron.path.dirname(filePath), fileData: [resp.data], isDir: false }));
+      const workspaceDir = await window.electron.path.dirname(filePath);
+      dispatch(updateWorkSpace({ workspaceName: fileName, workspaceDir, fileData: [resp.data], isDir: false }));
       window.electron.file.watchFile(filePath);
       window.electron.window.setTitle(`${fileName} - ${filePath}`);
 
@@ -49,7 +50,7 @@ const StartPage: React.FC = () => {
       console.log('folder:', resp.data);
       history.replace('/editor');
 
-      const folderName = window.electron.path.dirname(folderPath);
+      const folderName = await window.electron.path.basename(folderPath);
       dispatch(updateWorkSpace({ workspaceName: folderName, workspaceDir: folderPath, fileData: resp.data, isDir: true }));
       window.electron.window.setTitle(`${folderName} - ${folderPath}`);
 
