@@ -19,7 +19,7 @@ const StartPage: React.FC = () => {
 
   // FIXME:
   const handleCreate = () => {
-    dispatch(updateWorkSpace({ fileName: 'New File' }));
+    dispatch(updateWorkSpace({ workspaceName: 'New File' }));
     history.replace('/editor');
     window.electron.window.setTitle('New File');
   };
@@ -31,11 +31,12 @@ const StartPage: React.FC = () => {
       console.log('file:', resp.data);
       history.replace('/editor');
 
-      dispatch(updateWorkSpace(resp.data));
+      const fileName = resp.data.name;
+      dispatch(updateWorkSpace({ workspaceName: fileName, workspaceDir: window.electron.path.dirname(filePath), fileData: [resp.data], isDir: false }));
       window.electron.file.watchFile(filePath);
-      window.electron.window.setTitle(`${resp.data.fileName} - ${filePath}`);
+      window.electron.window.setTitle(`${fileName} - ${filePath}`);
 
-      settings.registerProject({ name: resp.data.fileName, path: filePath, isDir: false });
+      settings.registerProject({ name: fileName, path: filePath, isDir: false });
     } else {
       console.warn(resp);
     }
@@ -48,10 +49,11 @@ const StartPage: React.FC = () => {
       console.log('folder:', resp.data);
       history.replace('/editor');
 
-      dispatch(updateWorkSpace(resp.data));
-      window.electron.window.setTitle(`${resp.data.fileName} - ${folderPath}`);
+      const folderName = window.electron.path.dirname(folderPath);
+      dispatch(updateWorkSpace({ workspaceName: folderName, workspaceDir: folderPath, fileData: resp.data, isDir: true }));
+      window.electron.window.setTitle(`${folderName} - ${folderPath}`);
 
-      settings.registerProject({ name: resp.data.fileName, path: folderPath, isDir: true });
+      settings.registerProject({ name: folderName, path: folderPath, isDir: true });
     } else {
       console.warn(resp);
     }

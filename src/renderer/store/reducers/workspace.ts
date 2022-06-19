@@ -1,15 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 interface IState {
-  fileName: string;
-  filePath: string;
+  workspaceName: string;
+  workspaceDir: string;
   fileData: IFileData[];
   isDir: boolean;
 }
 
 const INIT_STATE: IState = {
-  fileName: '',
-  filePath: '',
+  workspaceName: '',
+  workspaceDir: '',
   fileData: [],
   isDir: false,
 };
