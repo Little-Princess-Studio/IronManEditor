@@ -1,5 +1,3 @@
-import { createSlice } from '@reduxjs/toolkit';
-
 interface IState {
   workspaceName: string;
   workspaceDir: string;
@@ -14,16 +12,21 @@ const INIT_STATE: IState = {
   isDir: false,
 };
 
-export const workspaceSlice = createSlice({
-  name: 'workspace',
-  initialState: INIT_STATE,
-  reducers: {
-    updateWorkSpace: (state: IState, action) => {
-      Object.assign(state, action.payload);
-    },
-  },
-});
+const workspaceReducer = (state: IState = INIT_STATE, action: { type: string; payload?: Partial<IState> }) => {
+  switch (action.type) {
+    case 'update_workspace': {
+      return { ...state, ...action.payload };
+    }
+    default:
+      return state;
+  }
+};
 
-export const { updateWorkSpace } = workspaceSlice.actions;
+export const updateWorkSpace = (payload: Partial<IState>) => {
+  return {
+    type: 'update_workspace',
+    payload,
+  };
+};
 
-export default workspaceSlice.reducer;
+export default workspaceReducer;

@@ -89,7 +89,7 @@ const ExplorerFolder: React.FC = () => {
         <i className="file-filter-input-icon cursor-pointer" onClick={() => onSearch()} />
       </div>
       <div className="file-list-wrap">
-        <Tree treeData={treeData} loadData={onLoadData} />
+        <Tree treeData={treeData} loadData={onLoadData} selectable={false} />
       </div>
     </div>
   );
