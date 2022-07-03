@@ -10,8 +10,7 @@ const StartPage: React.FC = () => {
   const dispatch = useDispatch();
   const [projects, setProjects] = useState(settings.recentProjects.slice(0, 5));
 
-  const openingFileRef = useRef(false);
-  const openingFolderRef = useRef(false);
+  const openingRef = useRef(false);
 
   useEffect(() => {
     window.electron.window.setTitle('IronMan Editor');
@@ -67,11 +66,11 @@ const StartPage: React.FC = () => {
 
   const handleOpenFile = async () => {
     // handle fast click
-    if (openingFileRef.current) {
+    if (openingRef.current) {
       return;
     }
 
-    openingFileRef.current = true;
+    openingRef.current = true;
 
     try {
       const res = await window.electron.dialog.showOpenDialog({
@@ -87,17 +86,17 @@ const StartPage: React.FC = () => {
     } catch (err) {
       console.error(err);
     } finally {
-      openingFileRef.current = false;
+      openingRef.current = false;
     }
   };
 
   const handleOpenFolder = async () => {
     // handle fast click
-    if (openingFolderRef.current) {
+    if (openingRef.current) {
       return;
     }
 
-    openingFolderRef.current = true;
+    openingRef.current = true;
 
     try {
       const res = await window.electron.dialog.showOpenDialog({
@@ -111,7 +110,7 @@ const StartPage: React.FC = () => {
     } catch (err) {
       console.error(err);
     } finally {
-      openingFolderRef.current = false;
+      openingRef.current = false;
     }
   };
 
@@ -154,13 +153,11 @@ const StartPage: React.FC = () => {
           <h3>最近</h3>
           {projects.length === 0 && <div className="recent-project-item ellipsis">你最近没有使用的文件/文件夹</div>}
           {projects.map((it) => (
-            <div className="recent-project-item ellipsis" key={it.path}>
-              <button type="button" className="recent-project-name" title={it.path} onClick={() => tryOpenProject(it)}>
+            <div className="recent-project-item ellipsis" key={it.path} title={it.path}>
+              <button type="button" className="recent-project-name" onClick={() => tryOpenProject(it)}>
                 {it.name}
               </button>
-              <span className="recent-project-path" title={it.path}>
-                {it.path}
-              </span>
+              <span className="recent-project-path">{it.path}</span>
               <i className="recent-project-close select-none cursor-pointer" onClick={() => removeProject(it)} />
             </div>
           ))}
