@@ -18,7 +18,7 @@ const StartPage: React.FC = () => {
 
   // FIXME:
   const handleCreate = () => {
-    dispatch(updateWorkSpace({ workspaceName: 'New File' }));
+    dispatch(updateWorkSpace({ workspaceName: 'New File', isDir: false }));
     history.replace('/editor');
     window.electron.window.setTitle('New File');
   };

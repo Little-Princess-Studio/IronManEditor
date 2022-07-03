@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { RootState } from '@renderer/store/configureStore';
 import { updateWorkSpace } from '@renderer/store/reducers/workspace';
 import { Tree } from 'antd';
@@ -27,10 +28,15 @@ const ExplorerFolder: React.FC = () => {
   };
 
   useEffect(() => {
-    if (fileData.length > 0 && Object.keys(folderListRef.current).length === 0) {
+    if (Array.isArray(fileData) && fileData.length > 0 && Object.keys(folderListRef.current).length === 0) {
       cacheFileData(fileData);
     }
   }, [fileData]);
+
+  useHotkeys('ctrl+p', () => {
+    // TODO:
+    console.log('ctrl+p');
+  });
 
   const onSearch = (value?: string) => {
     value = value || inputRef.current?.value;
@@ -70,7 +76,6 @@ const ExplorerFolder: React.FC = () => {
       if (resp.success) {
         folderListRef.current[key].children = resp.data;
 
-        // FIXME: update state
         dispatch(updateWorkSpace({ fileData: [...fileData] }));
 
         cacheFileData(resp.data);
