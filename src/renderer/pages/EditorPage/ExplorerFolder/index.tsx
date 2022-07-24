@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RootState } from '@renderer/store/configureStore';
 import { updateWorkSpace } from '@renderer/store/reducers/workspace';
+import { updateWorkFile } from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
 import { DataNode, EventDataNode } from 'antd/lib/tree';
 import 'antd/lib/tree/style';
@@ -60,6 +61,7 @@ const ExplorerFolder: React.FC = () => {
         title: it.name,
         key: it.path,
         isLeaf: !it.isDir,
+        selectable: !it.isDir,
         children: it.isDir && it.children ? renderTreeNode(it.children) : undefined,
       }));
     };
@@ -87,6 +89,26 @@ const ExplorerFolder: React.FC = () => {
     return Promise.resolve();
   };
 
+  const onSelect = async (selectedKeys: string[]) => {
+    if (selectedKeys.length < 1) {
+      return;
+    }
+
+    dispatch(updateWorkFile({ path: '', content: '' }));
+
+    try {
+      const resp = await window.electron.file.readFile(selectedKeys[0]);
+
+      if (!resp.success) {
+        throw resp;
+      }
+
+      dispatch(updateWorkFile({ path: selectedKeys[0], content: resp.data.content }));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div className="h-full explorer-folders-view">
       <div className="file-search-wrap">
@@ -94,7 +116,7 @@ const ExplorerFolder: React.FC = () => {
         <i className="file-filter-input-icon cursor-pointer" onClick={() => onSearch()} />
       </div>
       <div className="file-list-wrap">
-        <Tree treeData={treeData} loadData={onLoadData} selectable={false} />
+        <Tree treeData={treeData} loadData={onLoadData} onSelect={onSelect} />
       </div>
     </div>
   );

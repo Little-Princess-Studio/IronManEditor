@@ -19,6 +19,7 @@ module.exports = {
     'class-methods-use-this': 'off',
     'no-console': 'off',
     'no-continue': 'off',
+    'no-unused-vars': 'warn',
     '@typescript-eslint/ban-ts-comment': 'off',
     'no-param-reassign': 'warn',
     'no-restricted-globals': 'warn',
@@ -27,6 +28,8 @@ module.exports = {
     'consistent-return': 'off',
     'prefer-destructuring': 'off',
     'prefer-promise-reject-errors': 'off',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-throw-literal': 'warn',
   },
   parserOptions: {
     ecmaVersion: 2020,
