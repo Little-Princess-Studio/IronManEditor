@@ -44,4 +44,7 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('window:title', title);
     },
   },
+  schema() {
+    return ipcRenderer.invoke('schema');
+  },
 });

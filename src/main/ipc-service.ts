@@ -1,5 +1,5 @@
-import { BrowserWindow, dialog, ipcMain } from 'electron';
-import { existsSync, readFileSync, statSync } from 'fs';
+import { app, BrowserWindow, dialog, ipcMain } from 'electron';
+import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
 import fsPromises from 'fs/promises';
 import PathUtil from 'path';
 import fsWatcher from './fs-watcher';
@@ -59,11 +59,14 @@ export const readFileOrFolder = async (path: string): Promise<IFileData | IFileD
 export default class IpcService {
   readonly mainWindow: BrowserWindow;
 
+  schemas: { [name: string]: any } = {};
+
   constructor(mainWindow: BrowserWindow) {
     this.mainWindow = mainWindow;
   }
 
   init() {
+    this.initSchemas();
     this.initDialogHandler();
     this.initFileHandler();
     this.initPathHandler();
@@ -73,6 +76,26 @@ export default class IpcService {
   destroy() {
     ipcMain.removeAllListeners();
     fsWatcher.removeAllListeners();
+  }
+
+  private initSchemas() {
+    const RESOURCES_PATH = app.isPackaged ? PathUtil.join(process.resourcesPath, 'assets') : PathUtil.join(__dirname, '../../assets');
+    const dirPath = PathUtil.join(RESOURCES_PATH, './schemas');
+    const dir = readdirSync(dirPath);
+
+    for (let i = 0, len = dir.length; i < len; i++) {
+      const file = dir[i];
+
+      if (file.endsWith('.json')) {
+        this.schemas[PathUtil.basename(file, '.json')] = JSON.parse(readFileSync(PathUtil.join(dirPath, file), 'utf-8'));
+      }
+    }
+
+    console.log(this.schemas);
+
+    ipcMain.handle('schema', () => {
+      return this.schemas;
+    });
   }
 
   private initDialogHandler() {
