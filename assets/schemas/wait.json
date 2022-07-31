@@ -14,7 +14,8 @@
       },
       "required": [
         "time"
-      ]
+      ],
+      "toStr": "Wait {time}s"
     }
   ]
 }

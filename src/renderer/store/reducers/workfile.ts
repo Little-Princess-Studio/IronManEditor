@@ -1,5 +1,6 @@
 import Ajv from 'ajv';
 import json5 from 'json5';
+import format from 'string-template';
 
 interface IState {
   /** file path */
@@ -78,6 +79,8 @@ export const updateWorkFile = async (dispatch, payload: Partial<IState>) => {
         const schema = await window.electron.schema();
         const ajv = new Ajv();
 
+        ajv.addKeyword('toStr');
+
         payload.events = json.events.map((evt) => {
           if (!Array.isArray(evt)) {
             return {
@@ -105,8 +108,11 @@ export const updateWorkFile = async (dispatch, payload: Partial<IState>) => {
               name: evtName,
               rawData: evt[1],
               schema: schema[evtName].items[1],
-              // FIXME:
               toString() {
+                if (this.schema.toStr) {
+                  return format(this.schema.toStr, this.rawData);
+                }
+
                 return JSON.stringify(this.rawData);
               },
             };

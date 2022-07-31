@@ -36,7 +36,8 @@
       },
       "required": [
         "content"
-      ]
+      ],
+      "toStr": "[ID: {cid}] says \"{content}\""
     }
   ]
 }

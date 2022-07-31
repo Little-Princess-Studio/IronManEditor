@@ -18,7 +18,8 @@
       "required": [
         "aid",
         "emoji_name"
-      ]
+      ],
+      "toStr": "[ID: {aid}] show #{emoji_name}"
     }
   ]
 }

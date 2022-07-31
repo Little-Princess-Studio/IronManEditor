@@ -18,7 +18,8 @@
       "required": [
         "who",
         "target"
-      ]
+      ],
+      "toStr": "[ID: {who}] put down [ID: {target}]"
     }
   ]
 }

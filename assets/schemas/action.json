@@ -18,7 +18,8 @@
       "required": [
         "aid",
         "action_name"
-      ]
+      ],
+      "toStr": "[ID: {aid}] act #{action_name}"
     }
   ]
 }

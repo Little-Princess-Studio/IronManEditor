@@ -14,7 +14,8 @@
       },
       "required": [
         "pkg_name"
-      ]
+      ],
+      "toStr": "Use {pkg_name}.txt"
     }
   ]
 }

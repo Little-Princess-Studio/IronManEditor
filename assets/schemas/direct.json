@@ -19,7 +19,8 @@
       "required": [
         "aid",
         "dir"
-      ]
+      ],
+      "toStr": "[ID: {aid}] face to {dir}"
     }
   ]
 }

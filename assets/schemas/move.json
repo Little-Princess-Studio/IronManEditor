@@ -23,7 +23,8 @@
       "required": [
         "aid",
         "path_relative"
-      ]
+      ],
+      "toStr": "[ID: {aid}] {move_type} to <{path_relative}>"
     }
   ]
 }
