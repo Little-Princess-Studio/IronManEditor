@@ -1,0 +1,29 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["move"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "string"
+        },
+        "move_type": {
+          "type": "string",
+          "enum": ["default", "walk", "run", "noanimation"]
+        },
+        "path_relative": {
+          "type": "array",
+          "enum": ["l", "r", "u", "d", "lu", "ld", "ru", "rd"]
+        }
+      },
+      "required": [
+        "aid",
+        "path_relative"
+      ]
+    }
+  ]
+}

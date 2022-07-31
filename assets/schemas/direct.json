@@ -1,0 +1,25 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["direct"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "string"
+        },
+        "dir": {
+          "type": "string",
+          "enum": ["r", "l", "u", "d"]
+        }
+      },
+      "required": [
+        "aid",
+        "dir"
+      ]
+    }
+  ]
+}

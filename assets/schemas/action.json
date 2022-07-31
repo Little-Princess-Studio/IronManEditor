@@ -1,0 +1,24 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["action"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "string"
+        },
+        "action_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "aid",
+        "action_name"
+      ]
+    }
+  ]
+}
