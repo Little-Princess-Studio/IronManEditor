@@ -1,6 +1,6 @@
 import React from 'react';
 import JSONSchemaForm from '@rjsf/antd';
-import { Drawer, Form, Input } from 'antd';
+import { Drawer, Form, Input, Button } from 'antd';
 import { isEmpty } from 'lodash-es';
 import './index.less';
 
@@ -10,22 +10,44 @@ interface OwnerProps {
   visible: boolean;
   event?: any;
   onClose?: () => void;
+  onSubmit?: (values) => void;
 }
 
-const EventDetailDrawer: React.FC<OwnerProps> = ({ event, visible, onClose }) => {
+const EventDetailDrawer: React.FC<OwnerProps> = ({ event, visible, onClose, onSubmit }) => {
   const renderEventDetail = () => {
     if (isEmpty(event)) {
       return null;
     }
 
     if (event.schema) {
-      return <JSONSchemaForm schema={event.schema} />;
+      return <JSONSchemaForm schema={event.schema} formData={event.rawData} onSubmit={(values) => onSubmit?.(values.formData)} />;
     }
 
     return (
-      <Form layout="vertical" style={{ height: '100%' }}>
-        <Form.Item noStyle name="raw" initialValue={JSON.stringify(event.rawData, null, '\r')}>
-          <TextArea bordered style={{ width: '100%', height: '100%' }} />
+      <Form layout="vertical" style={{ height: '100%' }} onFinish={(values) => onSubmit?.(JSON.parse(values.raw))}>
+        <Form.Item
+          name="raw"
+          initialValue={JSON.stringify(event.rawData, null, '\t')}
+          rules={[
+            {
+              validator(_, value) {
+                try {
+                  JSON.parse(value);
+                } catch (err) {
+                  console.log(err);
+                  return Promise.reject(new Error('invalid json data'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
+          <TextArea bordered rows={30} />
+        </Form.Item>
+        <Form.Item style={{ marginTop: 16 }}>
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
         </Form.Item>
       </Form>
     );

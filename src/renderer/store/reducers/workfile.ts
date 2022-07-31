@@ -28,6 +28,14 @@ const workfileReducer = (state: IState = INIT_STATE, action: { type: string; pay
     case 'activate_workfile_event': {
       return { ...state, activeEventIndex: action.payload };
     }
+    case 'update_workfile_event': {
+      const events = [...state.events];
+      const { index, rawData } = action.payload as any;
+
+      events[index] = { ...events[index], rawData };
+
+      return { ...state, events };
+    }
     default:
       return state;
   }
@@ -111,6 +119,16 @@ export const activateEvent = (index: number) => {
   return {
     type: 'activate_workfile_event',
     payload: index,
+  };
+};
+
+export const updateEventData = (rawData, index) => {
+  return {
+    type: 'update_workfile_event',
+    payload: {
+      index,
+      rawData,
+    },
   };
 };
 

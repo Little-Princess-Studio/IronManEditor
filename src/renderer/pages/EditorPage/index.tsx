@@ -4,7 +4,7 @@ import EditorActions from './EditorActions';
 import ExplorerFolder from './ExplorerFolder';
 import FileViewer from './FileViewer';
 import { RootState } from '@renderer/store/configureStore';
-import { activateEvent } from '@renderer/store/reducers/workfile';
+import { activateEvent, updateEventData } from '@renderer/store/reducers/workfile';
 import EventDetailDrawer from '@renderer/components/EventDetailDrawer';
 import { get } from 'lodash-es';
 import './index.less';
@@ -29,6 +29,9 @@ const EditorPage: React.FC = () => {
         event={get(events, activeEventIndex, null)}
         onClose={() => {
           dispatch(activateEvent(-1));
+        }}
+        onSubmit={(values) => {
+          dispatch(updateEventData(values, activeEventIndex));
         }}
       />
     </div>
