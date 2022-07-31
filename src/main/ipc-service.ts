@@ -129,6 +129,10 @@ export default class IpcService {
       fsWatcher.add(filepath);
     });
 
+    ipcMain.handle('file:write', (event, path: string, content: string) => {
+      return fsPromises.writeFile(path, content);
+    });
+
     fsWatcher.on('change', async (filepath) => {
       const res = await readFileOrFolder(filepath)
         .then((value) => {

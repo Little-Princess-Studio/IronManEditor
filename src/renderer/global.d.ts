@@ -10,6 +10,7 @@ declare interface Window {
       readFile(filepath: string): Promise<IpcResponse<IFileData>>;
       readFolder(folderPath: string): Promise<IpcResponse<IFileData[]>>;
       watchFile(filepath: string): void;
+      writeFile(path: string, content: string): Promise<void>;
     };
     path: {
       isDirectory(path: string): Promise<boolean>;

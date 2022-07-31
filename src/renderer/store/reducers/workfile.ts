@@ -17,13 +17,37 @@ const INIT_STATE: IState = {
   activeEventIndex: -1,
 };
 
+const saveWorkFile = async (path: string, content: string, events: any[]) => {
+  try {
+    const json = json5.parse(content);
+    json.events = events.map((evt) => {
+      const arr = [evt.name];
+
+      if (evt.rawData) {
+        arr.push(evt.rawData);
+      }
+
+      return arr;
+    });
+
+    await window.electron.file.writeFile(path, json5.stringify(json, null, '  '));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const workfileReducer = (state: IState = INIT_STATE, action: { type: string; payload?: Partial<IState> }) => {
   switch (action.type) {
     case 'update_workfile': {
       return { ...state, ...action.payload, activeEventIndex: -1 };
     }
     case 'delete_workfile_event_at': {
-      return { ...state, events: state.events.filter((it, index) => index !== action.payload) };
+      const events = [...state.events];
+      events.splice(action.payload as number, 1);
+
+      saveWorkFile(state.path, state.content, events);
+
+      return { ...state, events };
     }
     case 'activate_workfile_event': {
       return { ...state, activeEventIndex: action.payload };
@@ -33,6 +57,8 @@ const workfileReducer = (state: IState = INIT_STATE, action: { type: string; pay
       const { index, rawData } = action.payload as any;
 
       events[index] = { ...events[index], rawData };
+
+      saveWorkFile(state.path, state.content, events);
 
       return { ...state, events };
     }

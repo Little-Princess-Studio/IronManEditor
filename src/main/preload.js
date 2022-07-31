@@ -27,6 +27,9 @@ contextBridge.exposeInMainWorld('electron', {
     watchFile(filepath) {
       ipcRenderer.send('file:watch', filepath);
     },
+    writeFile(path, content) {
+      return ipcRenderer.invoke('file:write', path, content);
+    },
   },
   path: {
     isDirectory(path) {

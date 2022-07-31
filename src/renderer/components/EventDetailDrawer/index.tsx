@@ -34,7 +34,6 @@ const EventDetailDrawer: React.FC<OwnerProps> = ({ event, visible, onClose, onSu
                 try {
                   JSON.parse(value);
                 } catch (err) {
-                  console.log(err);
                   return Promise.reject(new Error('invalid json data'));
                 }
                 return Promise.resolve();
