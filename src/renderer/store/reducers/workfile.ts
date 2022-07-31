@@ -6,7 +6,7 @@ interface IState {
   path: string;
   /** file content */
   content: string;
-  events: any[];
+  events: { name: string; rawData?: any; schema?: any }[];
 }
 
 const INIT_STATE: IState = {
@@ -26,29 +26,57 @@ const workfileReducer = (state: IState = INIT_STATE, action: { type: string; pay
 };
 
 export const updateWorkFile = async (dispatch, payload: Partial<IState>) => {
-  if (payload && payload.content) {
+  payload.events = [];
+
+  if (payload.content) {
     try {
       const json = json5.parse(payload.content);
 
       if (Array(json.events) && json.events.length > 0) {
         const schema = await window.electron.schema();
         const ajv = new Ajv();
-        // console.log(json.events, schema);
 
         payload.events = json.events.map((evt) => {
-          if (!Array.isArray(evt) || evt.length < 2) {
-            return evt;
-          }
-
-          if (schema[evt[0]] && ajv.compile(schema[evt[0]])(evt)) {
+          if (!Array.isArray(evt)) {
             return {
-              name: evt[0],
-              rawData: evt[1],
-              schema: schema[evt[0]].items[1],
+              name: 'unknown',
+              rawData: evt,
+              toString() {
+                return JSON.stringify(this.rawData);
+              },
             };
           }
 
-          return evt;
+          if (evt.length < 2) {
+            return {
+              name: evt[0] || 'unknown',
+              toString() {
+                return '';
+              },
+            };
+          }
+
+          const evtName = evt[0];
+
+          if (schema[evtName] && ajv.compile(schema[evtName])(evt)) {
+            return {
+              name: evtName,
+              rawData: evt[1],
+              schema: schema[evtName].items[1],
+              // FIXME:
+              toString() {
+                return JSON.stringify(this.rawData);
+              },
+            };
+          }
+
+          return {
+            name: evtName,
+            rawData: evt[1],
+            toString() {
+              return JSON.stringify(this.rawData);
+            },
+          };
         });
 
         console.log(payload.events);
