@@ -4,6 +4,7 @@ import './assets/global.less';
 import 'tailwindcss/tailwind.css';
 import StartPage from './pages/StartPage';
 import EditorPage from './pages/EditorPage';
+import 'antd/dist/antd.css';
 
 export default function App() {
   return (

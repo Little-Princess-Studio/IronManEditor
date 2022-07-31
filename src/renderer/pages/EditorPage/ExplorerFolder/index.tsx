@@ -6,7 +6,6 @@ import { updateWorkSpace } from '@renderer/store/reducers/workspace';
 import { updateWorkFile } from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
 import { DataNode, EventDataNode } from 'antd/lib/tree';
-import 'antd/lib/tree/style';
 import './index.less';
 
 const ExplorerFolder: React.FC = () => {

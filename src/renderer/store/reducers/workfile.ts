@@ -7,18 +7,26 @@ interface IState {
   /** file content */
   content: string;
   events: { name: string; rawData?: any; schema?: any }[];
+  activeEventIndex: number;
 }
 
 const INIT_STATE: IState = {
   path: '',
   content: '',
   events: [],
+  activeEventIndex: -1,
 };
 
 const workfileReducer = (state: IState = INIT_STATE, action: { type: string; payload?: Partial<IState> }) => {
   switch (action.type) {
     case 'update_workfile': {
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload, activeEventIndex: -1 };
+    }
+    case 'delete_workfile_event_at': {
+      return { ...state, events: state.events.filter((it, index) => index !== action.payload) };
+    }
+    case 'activate_workfile_event': {
+      return { ...state, activeEventIndex: action.payload };
     }
     default:
       return state;
@@ -90,6 +98,20 @@ export const updateWorkFile = async (dispatch, payload: Partial<IState>) => {
     type: 'update_workfile',
     payload,
   });
+};
+
+export const deleteEvent = (index: number) => {
+  return {
+    type: 'delete_workfile_event_at',
+    payload: index,
+  };
+};
+
+export const activateEvent = (index: number) => {
+  return {
+    type: 'activate_workfile_event',
+    payload: index,
+  };
 };
 
 export default workfileReducer;
