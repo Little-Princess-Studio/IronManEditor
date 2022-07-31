@@ -23,6 +23,7 @@ declare interface Window {
     window: {
       setTitle(title: string): Promise<void>;
     };
+    schema: () => Promise<{ [name: string]: any }>;
   };
 }
 

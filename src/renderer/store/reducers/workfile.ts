@@ -1,8 +1,5 @@
+import Ajv from 'ajv';
 import json5 from 'json5';
-import manager from '../../parsers/ParserManager';
-import '../../parsers/MsgParser';
-import '../../parsers/MsgPkgParser';
-import '../../parsers/WaitParser';
 
 interface IState {
   /** file path */
@@ -21,32 +18,50 @@ const INIT_STATE: IState = {
 const workfileReducer = (state: IState = INIT_STATE, action: { type: string; payload?: Partial<IState> }) => {
   switch (action.type) {
     case 'update_workfile': {
-      const newState = { ...state, ...action.payload };
-
-      if (newState.content) {
-        try {
-          const jsonData = json5.parse(newState.content);
-
-          newState.events = manager.parseEvents(jsonData.events);
-
-          console.log(jsonData, newState.events);
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      return newState;
+      return { ...state, ...action.payload };
     }
     default:
       return state;
   }
 };
 
-export const updateWorkFile = (payload: Partial<IState>) => {
-  return {
+export const updateWorkFile = async (dispatch, payload: Partial<IState>) => {
+  if (payload && payload.content) {
+    try {
+      const json = json5.parse(payload.content);
+
+      if (Array(json.events) && json.events.length > 0) {
+        const schema = await window.electron.schema();
+        const ajv = new Ajv();
+        // console.log(json.events, schema);
+
+        payload.events = json.events.map((evt) => {
+          if (!Array.isArray(evt) || evt.length < 2) {
+            return evt;
+          }
+
+          if (schema[evt[0]] && ajv.compile(schema[evt[0]])(evt)) {
+            return {
+              name: evt[0],
+              rawData: evt[1],
+              schema: schema[evt[0]].items[1],
+            };
+          }
+
+          return evt;
+        });
+
+        console.log(payload.events);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  dispatch({
     type: 'update_workfile',
     payload,
-  };
+  });
 };
 
 export default workfileReducer;

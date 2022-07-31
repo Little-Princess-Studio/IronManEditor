@@ -94,7 +94,7 @@ const ExplorerFolder: React.FC = () => {
       return;
     }
 
-    dispatch(updateWorkFile({ path: '', content: '' }));
+    updateWorkFile(dispatch, { path: '', content: '' });
 
     try {
       const resp = await window.electron.file.readFile(selectedKeys[0]);
@@ -103,7 +103,7 @@ const ExplorerFolder: React.FC = () => {
         throw resp;
       }
 
-      dispatch(updateWorkFile({ path: selectedKeys[0], content: resp.data.content }));
+      updateWorkFile(dispatch, { path: selectedKeys[0], content: resp.data.content });
     } catch (err) {
       console.log(err);
     }
