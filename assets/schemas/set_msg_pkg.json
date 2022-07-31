@@ -1,0 +1,21 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["set_msg_pkg"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "pkg_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pkg_name"
+      ],
+      "toStr": "Use {pkg_name}.txt"
+    }
+  ]
+}

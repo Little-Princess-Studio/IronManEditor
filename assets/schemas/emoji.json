@@ -1,0 +1,25 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["emoji"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "aid": {
+          "type": "string"
+        },
+        "emoji_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "aid",
+        "emoji_name"
+      ],
+      "toStr": "[ID: {aid}] show #{emoji_name}"
+    }
+  ]
+}

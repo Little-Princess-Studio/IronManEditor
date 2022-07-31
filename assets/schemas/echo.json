@@ -1,0 +1,21 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["echo"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "msg"
+      ],
+      "toStr": "echo \"{msg}\""
+    }
+  ]
+}

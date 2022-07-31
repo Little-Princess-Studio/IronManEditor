@@ -44,18 +44,26 @@ export default merge(baseConfig, {
 
   target: ['web', 'electron-renderer'],
 
-  entry: [
-    `webpack-dev-server/client?http://localhost:${port}/dist`,
-    'webpack/hot/only-dev-server',
-    'core-js',
-    'regenerator-runtime/runtime',
-    path.join(webpackPaths.srcRendererPath, 'index.tsx'),
-  ],
+  entry: {
+    main: [
+      `webpack-dev-server/client?http://localhost:${port}/dist`,
+      'webpack/hot/only-dev-server',
+      'core-js',
+      'regenerator-runtime/runtime',
+      path.join(webpackPaths.srcRendererPath, 'index.tsx'),
+    ],
+    'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
+    'json.worker': 'monaco-editor/esm/vs/language/json/json.worker',
+    'css.worker': 'monaco-editor/esm/vs/language/css/css.worker',
+    'html.worker': 'monaco-editor/esm/vs/language/html/html.worker',
+    'ts.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker',
+  },
 
   output: {
     path: webpackPaths.distRendererPath,
     publicPath: '/',
-    filename: 'renderer.dev.js',
+    globalObject: 'self',
+    filename: '[name].dev.js',
     library: {
       type: 'umd',
     },
@@ -75,13 +83,14 @@ export default merge(baseConfig, {
               importLoaders: 1,
             },
           },
+          'postcss-loader',
           'less-loader'
         ],
         include: /\.module\.(le|c)ss$/,
       },
       {
         test: /\.(le|c)ss$/,
-        use: ['style-loader', 'css-loader', 'less-loader'],
+        use: ['style-loader', 'css-loader', 'postcss-loader', { loader: 'less-loader', options: { lessOptions: { javascriptEnabled: true } } }],
         exclude: /\.module\.(le|c)ss$/,
       },
       // Fonts

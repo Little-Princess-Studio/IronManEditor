@@ -1,0 +1,25 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["pickup"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "who": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "who",
+        "target"
+      ],
+      "toStr": "[ID: {who}] pick up [ID: {target}]"
+    }
+  ]
+}

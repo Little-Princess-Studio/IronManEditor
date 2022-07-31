@@ -1,0 +1,25 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["putdown"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "who": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "who",
+        "target"
+      ],
+      "toStr": "[ID: {who}] put down [ID: {target}]"
+    }
+  ]
+}

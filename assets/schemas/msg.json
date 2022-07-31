@@ -1,0 +1,43 @@
+{
+  "type": "array",
+  "items": [
+    {
+      "type": "string",
+      "enum": ["msg"]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "setting": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["aside", "normal", "slogan"]
+            },
+            "mode": {
+              "type": "string",
+              "enum": ["direct", "typer"]
+            },
+            "ignore_input": {
+              "type": "boolean"
+            },
+            "auto_disappear_time": {
+              "type": "integer"
+            }
+          }
+        },
+        "cid": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "toStr": "[ID: {cid}] says \"{content}\""
+    }
+  ]
+}
