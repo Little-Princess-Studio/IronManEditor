@@ -14,9 +14,30 @@ class ParserManager {
       return [];
     }
 
-    // TODO:
+    const result = [];
+    const parsers = [...this.parsers.values()];
 
-    return [];
+    for (let i = 0, len = events.length; i < len; i++) {
+      const evt = events[i];
+
+      let instance = null;
+
+      for (let j = 0, count = parsers.length; j < count; j++) {
+        const P = parsers[j];
+        if (P.probe(evt).match) {
+          instance = new P(P.probe(evt).evtData);
+          break;
+        }
+      }
+
+      if (instance != null) {
+        result.push(instance);
+      } else {
+        console.log('unrecognized event', evt);
+      }
+    }
+
+    return result;
   }
 }
 

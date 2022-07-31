@@ -1,5 +1,8 @@
 import json5 from 'json5';
 import manager from '../../parsers/ParserManager';
+import '../../parsers/MsgParser';
+import '../../parsers/MsgPkgParser';
+import '../../parsers/WaitParser';
 
 interface IState {
   /** file path */
@@ -26,7 +29,7 @@ const workfileReducer = (state: IState = INIT_STATE, action: { type: string; pay
 
           newState.events = manager.parseEvents(jsonData.events);
 
-          console.log(jsonData);
+          console.log(jsonData, newState.events);
         } catch (err) {
           console.error(err);
         }
