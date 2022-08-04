@@ -21,7 +21,7 @@ const EditorPage: React.FC = () => {
       <div className="h-full flex-shrink-0">
         <ExplorerFolder />
       </div>
-      <div className="h-full flex-grow">
+      <div className="h-full flex-grow overflow-y-auto">
         <FileViewer />
       </div>
       <EventDetailDrawer
