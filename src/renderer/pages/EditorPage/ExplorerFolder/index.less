@@ -50,5 +50,36 @@
     .anticon {
       vertical-align: unset;
     }
+
+    .root-folder-treenode {
+      .ant-tree-title {
+        display: flex;
+        align-items: center;
+
+        span {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .icon-collapse-all {
+        flex-shrink: 0;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-image: url(./ic_collapse.svg);
+        background-position: center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        padding: 10px 12px;
+        border-radius: 3px;
+
+        &:hover {
+          background-color: #d3d3d3;
+        }
+      }
+    }
   }
 }

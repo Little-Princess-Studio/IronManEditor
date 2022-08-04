@@ -1,17 +1,18 @@
-import React, { useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RootState } from '@renderer/store/configureStore';
 import { updateWorkSpace } from '@renderer/store/reducers/workspace';
 import { updateWorkFile } from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
-import { DataNode, EventDataNode, DirectoryTreeProps } from 'antd/lib/tree';
+import { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import './index.less';
 
 const { DirectoryTree } = Tree;
 
 const ExplorerFolder: React.FC = () => {
-  const { fileData } = useSelector((state: RootState) => state.workspace);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+  const { fileData, workspaceName, workspaceDir } = useSelector((state: RootState) => state.workspace);
   const folderListRef = useRef<{ [path: string]: IFileData }>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useDispatch();
@@ -34,6 +35,10 @@ const ExplorerFolder: React.FC = () => {
       cacheFileData(fileData);
     }
   }, [fileData]);
+
+  useEffect(() => {
+    setExpandedKeys([workspaceDir]);
+  }, [workspaceDir]);
 
   useHotkeys('ctrl+p', () => {
     // TODO:
@@ -67,10 +72,32 @@ const ExplorerFolder: React.FC = () => {
       }));
     };
 
-    return renderTreeNode(fileData);
-  }, [fileData]);
+    return [
+      {
+        className: 'root-folder-treenode',
+        title: (
+          <>
+            <span>{workspaceName}</span>
+            <i
+              className="icon-collapse-all"
+              onClickCapture={(e) => {
+                setExpandedKeys([workspaceDir]);
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            />
+          </>
+        ),
+        key: workspaceDir,
+        icon: () => null,
+        isLeaf: false,
+        selectable: false,
+        children: renderTreeNode(fileData),
+      },
+    ];
+  }, [fileData, workspaceName, workspaceDir]);
 
-  const onLoadData = async (treeNode: EventDataNode<DataNode>) => {
+  const onLoadData: DirectoryTreeProps['loadData'] = async (treeNode) => {
     const { key, isLeaf } = treeNode;
 
     if (!isLeaf) {
@@ -90,6 +117,10 @@ const ExplorerFolder: React.FC = () => {
     }
 
     return Promise.resolve();
+  };
+
+  const onExpand: DirectoryTreeProps['onExpand'] = (expandedKeys) => {
+    setExpandedKeys(expandedKeys as string[]);
   };
 
   const onSelect: DirectoryTreeProps['onSelect'] = async (selectedKeys, info) => {
@@ -112,6 +143,15 @@ const ExplorerFolder: React.FC = () => {
     }
   };
 
+  const onRightClick: DirectoryTreeProps['onRightClick'] = ({ event, node }) => {
+    if (node.isLeaf) {
+      return;
+    }
+
+    // TODO: new file
+    console.log(event, node);
+  };
+
   return (
     <div className="h-full explorer-folders-view">
       <div className="file-search-wrap">
@@ -119,7 +159,14 @@ const ExplorerFolder: React.FC = () => {
         <i className="file-filter-input-icon cursor-pointer" onClick={() => onSearch()} />
       </div>
       <div className="file-list-wrap">
-        <DirectoryTree treeData={treeData} loadData={onLoadData} onSelect={onSelect} />
+        <DirectoryTree
+          expandedKeys={expandedKeys}
+          treeData={treeData}
+          loadData={onLoadData}
+          onExpand={onExpand}
+          onSelect={onSelect}
+          onRightClick={onRightClick}
+        />
       </div>
     </div>
   );
