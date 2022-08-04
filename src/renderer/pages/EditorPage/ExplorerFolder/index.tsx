@@ -5,8 +5,10 @@ import { RootState } from '@renderer/store/configureStore';
 import { updateWorkSpace } from '@renderer/store/reducers/workspace';
 import { updateWorkFile } from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
-import { DataNode, EventDataNode } from 'antd/lib/tree';
+import { DataNode, EventDataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import './index.less';
+
+const { DirectoryTree } = Tree;
 
 const ExplorerFolder: React.FC = () => {
   const { fileData } = useSelector((state: RootState) => state.workspace);
@@ -72,6 +74,8 @@ const ExplorerFolder: React.FC = () => {
     const { key, isLeaf } = treeNode;
 
     if (!isLeaf) {
+      console.log('before onLoadData:', key);
+
       const resp = await window.electron.file.readFolder(key as string);
 
       if (resp.success) {
@@ -88,7 +92,7 @@ const ExplorerFolder: React.FC = () => {
     return Promise.resolve();
   };
 
-  const onSelect = async (selectedKeys: string[]) => {
+  const onSelect: DirectoryTreeProps['onSelect'] = async (selectedKeys, info) => {
     if (selectedKeys.length < 1) {
       return;
     }
@@ -96,13 +100,13 @@ const ExplorerFolder: React.FC = () => {
     updateWorkFile(dispatch, { path: '', content: '' });
 
     try {
-      const resp = await window.electron.file.readFile(selectedKeys[0]);
+      const resp = await window.electron.file.readFile(selectedKeys[0] as string);
 
       if (!resp.success) {
         throw resp;
       }
 
-      updateWorkFile(dispatch, { path: selectedKeys[0], content: resp.data.content });
+      updateWorkFile(dispatch, { path: selectedKeys[0] as string, content: resp.data.content });
     } catch (err) {
       console.log(err);
     }
@@ -115,7 +119,7 @@ const ExplorerFolder: React.FC = () => {
         <i className="file-filter-input-icon cursor-pointer" onClick={() => onSearch()} />
       </div>
       <div className="file-list-wrap">
-        <Tree treeData={treeData} loadData={onLoadData} onSelect={onSelect} />
+        <DirectoryTree treeData={treeData} loadData={onLoadData} onSelect={onSelect} />
       </div>
     </div>
   );
