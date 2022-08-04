@@ -76,7 +76,7 @@ const createWindow = async () => {
     },
   });
 
-  const ipcService = new IpcService(mainWindow);
+  const ipcService = new IpcService(mainWindow, RESOURCES_PATH);
   ipcService.init();
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));

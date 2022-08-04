@@ -1,6 +1,5 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
-import { existsSync, readdirSync, readFileSync, statSync } from 'fs';
-import fsPromises from 'fs/promises';
+import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { existsSync, readdirSync, readFileSync, statSync, writeFile } from 'fs';
 import PathUtil from 'path';
 import fsWatcher from './fs-watcher';
 
@@ -15,12 +14,12 @@ export const readFileOrFolder = async (path: string): Promise<IFileData | IFileD
 
   try {
     if (statSync(path).isFile()) {
-      const content = await fsPromises.readFile(path, { encoding: 'utf8' });
+      const content = readFileSync(path, { encoding: 'utf8' });
       return { name: PathUtil.basename(path), path, isDir: false, content };
     }
 
     if (statSync(path).isDirectory()) {
-      const files = await fsPromises.readdir(path);
+      const files = readdirSync(path);
 
       const fileData: IFileData[] = [];
 
@@ -59,10 +58,13 @@ export const readFileOrFolder = async (path: string): Promise<IFileData | IFileD
 export default class IpcService {
   readonly mainWindow: BrowserWindow;
 
+  readonly resourcePath: string;
+
   schemas: { [name: string]: any } = {};
 
-  constructor(mainWindow: BrowserWindow) {
+  constructor(mainWindow: BrowserWindow, resourcePath: string) {
     this.mainWindow = mainWindow;
+    this.resourcePath = resourcePath;
   }
 
   init() {
@@ -79,15 +81,18 @@ export default class IpcService {
   }
 
   private initSchemas() {
-    const RESOURCES_PATH = app.isPackaged ? PathUtil.join(process.resourcesPath, 'assets') : PathUtil.join(__dirname, '../../assets');
-    const dirPath = PathUtil.join(RESOURCES_PATH, './schemas');
+    const dirPath = PathUtil.join(this.resourcePath, './schemas');
     const dir = readdirSync(dirPath);
 
     for (let i = 0, len = dir.length; i < len; i++) {
       const file = dir[i];
 
-      if (file.endsWith('.json')) {
-        this.schemas[PathUtil.basename(file, '.json')] = JSON.parse(readFileSync(PathUtil.join(dirPath, file), 'utf-8'));
+      try {
+        if (file.endsWith('.json')) {
+          this.schemas[PathUtil.basename(file, '.json')] = JSON.parse(readFileSync(PathUtil.join(dirPath, file), 'utf-8'));
+        }
+      } catch (err) {
+        console.error(`read ${file} schema error:`, err);
       }
     }
 
@@ -130,7 +135,15 @@ export default class IpcService {
     });
 
     ipcMain.handle('file:write', (event, path: string, content: string) => {
-      return fsPromises.writeFile(path, content);
+      return new Promise((resolve, reject) => {
+        writeFile(path, content, (err) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          resolve(undefined);
+        });
+      });
     });
 
     fsWatcher.on('change', async (filepath) => {
