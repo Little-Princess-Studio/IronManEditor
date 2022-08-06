@@ -47,6 +47,11 @@ contextBridge.exposeInMainWorld('electron', {
       ipcRenderer.send('window:title', title);
     },
   },
+  menu: {
+    showExplorerMenu(path, isDir) {
+      ipcRenderer.send('menu:explorer', path, isDir);
+    },
+  },
   schema() {
     return ipcRenderer.invoke('schema');
   },

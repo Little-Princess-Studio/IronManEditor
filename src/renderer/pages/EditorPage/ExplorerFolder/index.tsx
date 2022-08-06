@@ -144,12 +144,8 @@ const ExplorerFolder: React.FC = () => {
   };
 
   const onRightClick: DirectoryTreeProps['onRightClick'] = ({ event, node }) => {
-    if (node.isLeaf) {
-      return;
-    }
-
-    // TODO: new file
-    console.log(event, node);
+    console.log(node);
+    window.electron.menu.showExplorerMenu(node.key as string, !node.isLeaf);
   };
 
   return (

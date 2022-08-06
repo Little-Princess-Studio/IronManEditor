@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { BrowserWindow, dialog, ipcMain, Menu, shell } from 'electron';
 import { existsSync, readdirSync, readFileSync, statSync, writeFile } from 'fs';
 import PathUtil from 'path';
 import fsWatcher from './fs-watcher';
@@ -73,6 +73,7 @@ export default class IpcService {
     this.initFileHandler();
     this.initPathHandler();
     this.initWindowHandler();
+    this.initMenuHandler();
   }
 
   destroy() {
@@ -173,6 +174,47 @@ export default class IpcService {
   private initWindowHandler() {
     ipcMain.on('window:title', (event, title) => {
       this.mainWindow.setTitle(title);
+    });
+  }
+
+  private initMenuHandler() {
+    ipcMain.on('menu:explorer', (event, path: string, isDir: boolean) => {
+      const template = [
+        {
+          label: '在 Finder 中显示',
+          click: () => shell.showItemInFolder(path),
+        },
+        { type: 'separator' },
+        {
+          label: '重命名', // TODO:
+        },
+        {
+          label: '删除',
+          click: async () => {
+            try {
+              await shell.trashItem(path);
+
+              event.sender.send('explorer-menu-command', 'trash', path);
+            } catch (err) {
+              console.log(`trash ${path} failed,`, err);
+            }
+          },
+        },
+      ];
+
+      if (isDir) {
+        template.unshift(
+          {
+            label: '新建文件', // TODO:
+          },
+          {
+            label: '新建文件夹', // TODO:
+          }
+        );
+      }
+
+      const menu = Menu.buildFromTemplate(template);
+      menu.popup({ window: BrowserWindow.fromWebContents(event.sender)! });
     });
   }
 }

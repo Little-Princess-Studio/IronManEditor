@@ -24,6 +24,9 @@ declare interface Window {
     window: {
       setTitle(title: string): Promise<void>;
     };
+    menu: {
+      showExplorerMenu(path: string, isDir: boolean): void;
+    };
     schema: () => Promise<{ [name: string]: any }>;
   };
 }
