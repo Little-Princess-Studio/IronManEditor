@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { updateWorkSpace } from '@renderer/store/reducers/workspace';
+import workspaceMode from '@renderer/store/reducers/workspace';
 import settings, { IRecentProject } from '@renderer/helpers/settings';
 import './index.less';
 
 const StartPage: React.FC = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
   const [projects, setProjects] = useState(settings.recentProjects.slice(0, 5));
 
   const openingRef = useRef(false);
@@ -18,7 +16,7 @@ const StartPage: React.FC = () => {
 
   // FIXME:
   const handleCreate = () => {
-    dispatch(updateWorkSpace({ workspaceName: 'New File', isDir: false }));
+    workspaceMode.updateWorkSpace({ workspaceName: 'New File', isDir: false });
     history.replace('/editor');
     window.electron.window.setTitle('New File');
   };
@@ -32,7 +30,7 @@ const StartPage: React.FC = () => {
 
       const fileName = resp.data.name;
       const workspaceDir = await window.electron.path.dirname(filePath);
-      dispatch(updateWorkSpace({ workspaceName: fileName, workspaceDir, fileData: [resp.data], isDir: false }));
+      workspaceMode.updateWorkSpace({ workspaceName: fileName, workspaceDir, fileData: [resp.data], isDir: false });
       window.electron.file.watchFile(filePath);
       window.electron.window.setTitle(`${fileName} - ${filePath}`);
 
@@ -50,7 +48,7 @@ const StartPage: React.FC = () => {
       history.replace('/editor');
 
       const folderName = await window.electron.path.basename(folderPath);
-      dispatch(updateWorkSpace({ workspaceName: folderName, workspaceDir: folderPath, fileData: resp.data, isDir: true }));
+      workspaceMode.updateWorkSpace({ workspaceName: folderName, workspaceDir: folderPath, fileData: resp.data, isDir: true });
       window.electron.window.setTitle(`${folderName} - ${folderPath}`);
 
       settings.registerProject({ name: folderName, path: folderPath, isDir: true });

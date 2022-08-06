@@ -1,3 +1,5 @@
+import AbsStateMode from './AbsStateMode';
+
 interface IState {
   workspaceName: string;
   workspaceDir: string;
@@ -12,21 +14,25 @@ const INIT_STATE: IState = {
   isDir: false,
 };
 
-const workspaceReducer = (state: IState = INIT_STATE, action: { type: string; payload?: Partial<IState> }) => {
-  switch (action.type) {
-    case 'update_workspace': {
-      return { ...state, ...action.payload };
+class WorkSpaceMode extends AbsStateMode<IState> {
+  reducer(state: IState = INIT_STATE, action: { type: string; payload: Partial<IState> }): IState {
+    switch (action.type) {
+      case 'update_workspace': {
+        return { ...state, ...action.payload };
+      }
+      default:
+        return state;
     }
-    default:
-      return state;
   }
-};
 
-export const updateWorkSpace = (payload: Partial<IState>) => {
-  return {
-    type: 'update_workspace',
-    payload,
-  };
-};
+  updateWorkSpace(payload: Partial<IState>) {
+    this.dispatch({
+      type: 'update_workspace',
+      payload,
+    });
+  }
+}
 
-export default workspaceReducer;
+const workspace = new WorkSpaceMode();
+
+export default workspace;

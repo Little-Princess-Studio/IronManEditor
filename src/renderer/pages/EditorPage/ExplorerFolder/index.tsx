@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RootState } from '@renderer/store/configureStore';
-import { updateWorkSpace } from '@renderer/store/reducers/workspace';
+import workspaceMode from '@renderer/store/reducers/workspace';
 import { updateWorkFile } from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
 import { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
@@ -108,7 +108,7 @@ const ExplorerFolder: React.FC = () => {
       if (resp.success) {
         folderListRef.current[key].children = resp.data;
 
-        dispatch(updateWorkSpace({ fileData: [...fileData] }));
+        workspaceMode.updateWorkSpace({ fileData: [...fileData] });
 
         cacheFileData(resp.data);
       } else {
