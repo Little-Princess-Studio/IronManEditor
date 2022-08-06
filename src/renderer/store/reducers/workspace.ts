@@ -5,6 +5,7 @@ interface IState {
   workspaceDir: string;
   fileData: IFileData[];
   isDir: boolean;
+  trashList: { path: string; isDir: boolean }[];
 }
 
 const INIT_STATE: IState = {
@@ -12,6 +13,7 @@ const INIT_STATE: IState = {
   workspaceDir: '',
   fileData: [],
   isDir: false,
+  trashList: [],
 };
 
 class WorkSpaceMode extends AbsStateMode<IState> {
@@ -19,6 +21,9 @@ class WorkSpaceMode extends AbsStateMode<IState> {
     switch (action.type) {
       case 'update_workspace': {
         return { ...state, ...action.payload };
+      }
+      case 'append_trash_item': {
+        return { ...state, trashList: [...state.trashList, action.payload as any] };
       }
       default:
         return state;
@@ -29,6 +34,16 @@ class WorkSpaceMode extends AbsStateMode<IState> {
     this.dispatch({
       type: 'update_workspace',
       payload,
+    });
+  }
+
+  trashItem(path: string, isDir: boolean) {
+    this.dispatch({
+      type: 'append_trash_item',
+      payload: {
+        path,
+        isDir,
+      },
     });
   }
 }

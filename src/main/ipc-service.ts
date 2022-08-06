@@ -194,7 +194,7 @@ export default class IpcService {
             try {
               await shell.trashItem(path);
 
-              event.sender.send('explorer-menu-command', 'trash', path);
+              event.sender.send('explorer-menu-command', 'trash', path, isDir);
             } catch (err) {
               console.log(`trash ${path} failed,`, err);
             }

@@ -12,7 +12,7 @@ const { DirectoryTree } = Tree;
 
 const ExplorerFolder: React.FC = () => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-  const { fileData, workspaceName, workspaceDir } = useSelector((state: RootState) => state.workspace);
+  const { fileData, workspaceName, workspaceDir, trashList } = useSelector((state: RootState) => state.workspace);
   const folderListRef = useRef<{ [path: string]: IFileData }>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -62,13 +62,26 @@ const ExplorerFolder: React.FC = () => {
 
   const treeData = useMemo(() => {
     const renderTreeNode = (list: IFileData[]): DataNode[] => {
-      return list.map((it) => ({
-        title: it.name,
-        key: it.path,
-        isLeaf: !it.isDir,
-        selectable: !it.isDir,
-        children: it.isDir && it.children ? renderTreeNode(it.children) : undefined,
-      }));
+      const arr = [];
+
+      for (let i = 0, len = list.length; i < len; i++) {
+        const it = list[i];
+
+        // hide trash item
+        if (trashList.length > 0 && trashList.findIndex((trashItem) => trashItem.path === it.path && trashItem.isDir === it.isDir) > -1) {
+          continue;
+        }
+
+        arr.push({
+          title: it.name,
+          key: it.path,
+          isLeaf: !it.isDir,
+          selectable: !it.isDir,
+          children: it.isDir && it.children ? renderTreeNode(it.children) : undefined,
+        });
+      }
+
+      return arr;
     };
 
     return [
@@ -94,7 +107,7 @@ const ExplorerFolder: React.FC = () => {
         children: renderTreeNode(fileData),
       },
     ];
-  }, [fileData, workspaceName, workspaceDir]);
+  }, [fileData, workspaceName, workspaceDir, trashList]);
 
   const onLoadData: DirectoryTreeProps['loadData'] = async (treeNode) => {
     const { key, isLeaf } = treeNode;

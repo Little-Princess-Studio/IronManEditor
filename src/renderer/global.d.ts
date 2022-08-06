@@ -1,4 +1,4 @@
-type IpcChannel = 'file:change';
+type IpcChannel = 'file:change' | 'explorer-menu-command';
 
 declare interface Window {
   electron: {
@@ -18,8 +18,8 @@ declare interface Window {
       dirname(path: string): Promise<string>;
     };
     ipcRenderer: {
-      on(channel: IpcChannel, func: (res: any) => void): void;
-      once(channel: IpcChannel, func: (res: any) => void): void;
+      on(channel: IpcChannel, func: (...res: any[]) => void): void;
+      once(channel: IpcChannel, func: (...res: any[]) => void): void;
     };
     window: {
       setTitle(title: string): Promise<void>;

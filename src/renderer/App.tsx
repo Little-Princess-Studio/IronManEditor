@@ -7,10 +7,13 @@ import 'antd/dist/antd.css';
 import StartPage from './pages/StartPage';
 import EditorPage from './pages/EditorPage';
 import { bindDispatchs } from './store/reducers';
+import useExplorerMenuCommand from './hooks/useExplorerMenuCommand';
 
 export default function App() {
   const dispatch = useDispatch();
   bindDispatchs(dispatch);
+
+  useExplorerMenuCommand();
 
   return (
     <Router>
