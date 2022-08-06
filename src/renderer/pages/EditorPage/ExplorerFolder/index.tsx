@@ -1,9 +1,9 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { RootState } from '@renderer/store/configureStore';
 import workspaceMode from '@renderer/store/reducers/workspace';
-import { updateWorkFile } from '@renderer/store/reducers/workfile';
+import workfileMode from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
 import { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
 import './index.less';
@@ -15,7 +15,6 @@ const ExplorerFolder: React.FC = () => {
   const { fileData, workspaceName, workspaceDir } = useSelector((state: RootState) => state.workspace);
   const folderListRef = useRef<{ [path: string]: IFileData }>({});
   const inputRef = useRef<HTMLInputElement>(null);
-  const dispatch = useDispatch();
 
   const cacheFileData = (list: IFileData[]) => {
     for (let i = 0, len = list.length; i < len; i++) {
@@ -128,7 +127,7 @@ const ExplorerFolder: React.FC = () => {
       return;
     }
 
-    updateWorkFile(dispatch, { path: '', content: '' });
+    workfileMode.updateWorkFile({ path: '', content: '' });
 
     try {
       const resp = await window.electron.file.readFile(selectedKeys[0] as string);
@@ -137,7 +136,7 @@ const ExplorerFolder: React.FC = () => {
         throw resp;
       }
 
-      updateWorkFile(dispatch, { path: selectedKeys[0] as string, content: resp.data.content });
+      workfileMode.updateWorkFile({ path: selectedKeys[0] as string, content: resp.data.content });
     } catch (err) {
       console.log(err);
     }

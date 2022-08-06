@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import EditorActions from './EditorActions';
 import ExplorerFolder from './ExplorerFolder';
 import FileViewer from './FileViewer';
 import { RootState } from '@renderer/store/configureStore';
-import { activateEvent, updateEventData } from '@renderer/store/reducers/workfile';
+import workfileMode from '@renderer/store/reducers/workfile';
 import EventDetailDrawer from '@renderer/components/EventDetailDrawer';
 import { get } from 'lodash-es';
 import './index.less';
 
 const EditorPage: React.FC = () => {
   const { activeEventIndex, events } = useSelector((state: RootState) => state.workfile);
-  const dispatch = useDispatch();
 
   return (
     <div className="full-screen editor-root">
@@ -28,10 +27,10 @@ const EditorPage: React.FC = () => {
         visible={activeEventIndex !== -1}
         event={get(events, activeEventIndex, null)}
         onClose={() => {
-          dispatch(activateEvent(-1));
+          workfileMode.activateEvent(-1);
         }}
         onSubmit={(values) => {
-          dispatch(updateEventData(values, activeEventIndex));
+          workfileMode.updateEventData(values, activeEventIndex);
         }}
       />
     </div>

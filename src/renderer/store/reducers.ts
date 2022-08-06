@@ -1,17 +1,17 @@
 import { combineReducers } from 'redux';
-import workfile from './reducers/workfile';
+import workfileMode from './reducers/workfile';
 import workspaceMode from './reducers/workspace';
 
 function createReducer(injectedReducers = {}) {
   return combineReducers({
-    workfile,
+    workfile: workfileMode.reducer,
     workspace: workspaceMode.reducer,
     ...injectedReducers,
   });
 }
 
 export const bindDispatchs = (dispatch) => {
-  [workspaceMode].forEach((it) => {
+  [workfileMode, workspaceMode].forEach((it) => {
     it.bindDispatch(dispatch);
   });
 };
