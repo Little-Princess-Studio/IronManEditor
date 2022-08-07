@@ -5,7 +5,8 @@ interface IState {
   workspaceDir: string;
   fileData: IFileData[];
   isDir: boolean;
-  trashList: { path: string; isDir: boolean }[];
+  trashList: Pick<IFileData, 'path' | 'isDir'>[];
+  renameItem: Pick<IFileData, 'path' | 'isDir'> | null;
 }
 
 const INIT_STATE: IState = {
@@ -14,12 +15,13 @@ const INIT_STATE: IState = {
   fileData: [],
   isDir: false,
   trashList: [],
+  renameItem: null,
 };
 
 class WorkSpaceMode extends AbsStateMode<IState> {
   reducer(state: IState = INIT_STATE, action: { type: string; payload: Partial<IState> }): IState {
     switch (action.type) {
-      case 'update_workspace': {
+      case 'merge_workspace_state': {
         return { ...state, ...action.payload };
       }
       case 'append_trash_item': {
@@ -32,18 +34,22 @@ class WorkSpaceMode extends AbsStateMode<IState> {
 
   updateWorkSpace(payload: Partial<IState>) {
     this.dispatch({
-      type: 'update_workspace',
+      type: 'merge_workspace_state',
       payload,
     });
   }
 
-  trashItem(path: string, isDir: boolean) {
+  trashItem(payload: Pick<IFileData, 'path' | 'isDir'>) {
     this.dispatch({
       type: 'append_trash_item',
-      payload: {
-        path,
-        isDir,
-      },
+      payload,
+    });
+  }
+
+  renameItem(renameItem: Pick<IFileData, 'path' | 'isDir'> | null) {
+    this.dispatch({
+      type: 'merge_workspace_state',
+      payload: { renameItem },
     });
   }
 }

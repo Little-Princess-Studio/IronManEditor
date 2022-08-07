@@ -186,7 +186,10 @@ export default class IpcService {
         },
         { type: 'separator' },
         {
-          label: '重命名', // TODO:
+          label: '重命名',
+          click: () => {
+            event.sender.send('explorer-menu-command', 'rename', path, isDir);
+          },
         },
         {
           label: '删除',
@@ -205,10 +208,16 @@ export default class IpcService {
       if (isDir) {
         template.unshift(
           {
-            label: '新建文件', // TODO:
+            label: '新建文件',
+            click: () => {
+              event.sender.send('explorer-menu-command', 'create-file', path, isDir);
+            },
           },
           {
-            label: '新建文件夹', // TODO:
+            label: '新建文件夹',
+            click: () => {
+              event.sender.send('explorer-menu-command', 'create-folder', path, isDir);
+            },
           }
         );
       }

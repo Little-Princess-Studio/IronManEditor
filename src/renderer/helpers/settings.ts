@@ -1,4 +1,4 @@
-export type IRecentProject = { name: string; path: string; isDir?: boolean };
+export type IRecentProject = Pick<IFileData, 'name' | 'path' | 'isDir'>;
 
 class Settings {
   static RECENT_PROJ_KEY = 'recent-projects';

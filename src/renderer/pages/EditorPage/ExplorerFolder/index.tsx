@@ -12,7 +12,7 @@ const { DirectoryTree } = Tree;
 
 const ExplorerFolder: React.FC = () => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
-  const { fileData, workspaceName, workspaceDir, trashList } = useSelector((state: RootState) => state.workspace);
+  const { fileData, workspaceName, workspaceDir, trashList, renameItem } = useSelector((state: RootState) => state.workspace);
   const folderListRef = useRef<{ [path: string]: IFileData }>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,8 +72,14 @@ const ExplorerFolder: React.FC = () => {
           continue;
         }
 
+        let title: React.ReactNode = it.name;
+        if (renameItem && renameItem.path === it.path && renameItem.isDir === it.isDir) {
+          // FIXME:
+          title = <input defaultValue={it.name} onBlur={() => workspaceMode.renameItem(null)} />;
+        }
+
         arr.push({
-          title: it.name,
+          title,
           key: it.path,
           isLeaf: !it.isDir,
           selectable: !it.isDir,
@@ -107,7 +113,7 @@ const ExplorerFolder: React.FC = () => {
         children: renderTreeNode(fileData),
       },
     ];
-  }, [fileData, workspaceName, workspaceDir, trashList]);
+  }, [fileData, workspaceName, workspaceDir, trashList, renameItem]);
 
   const onLoadData: DirectoryTreeProps['loadData'] = async (treeNode) => {
     const { key, isLeaf } = treeNode;
@@ -156,6 +162,11 @@ const ExplorerFolder: React.FC = () => {
   };
 
   const onRightClick: DirectoryTreeProps['onRightClick'] = ({ event, node }) => {
+    // ignore root node
+    if (node.pos === '0-0') {
+      return;
+    }
+
     console.log(node);
     window.electron.menu.showExplorerMenu(node.key as string, !node.isLeaf);
   };

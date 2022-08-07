@@ -39,7 +39,7 @@ const saveWorkFile = async (path: string, content: string, events: any[]) => {
 };
 
 class WorkFileMode extends AbsStateMode<IState> {
-  private schema: { [name: string]: any } = null;
+  private schema: { [name: string]: any } | null = null;
 
   async getSchema() {
     if (this.schema) {
@@ -173,7 +173,7 @@ class WorkFileMode extends AbsStateMode<IState> {
     });
   }
 
-  updateEventData(rawData, index) {
+  updateEventData(rawData: any, index: number) {
     this.dispatch({
       type: 'update_workfile_event',
       payload: {

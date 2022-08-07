@@ -13,12 +13,24 @@ const useExplorerMenuCommand = () => {
     window.electron.ipcRenderer.on('explorer-menu-command', (type, path: string, isDir: boolean) => {
       switch (type) {
         case 'trash': {
-          workspaceMode.trashItem(path, isDir);
+          workspaceMode.trashItem({ path, isDir });
 
           const workfilePath = workfilePathRef.current;
           if (workfilePath && ((workfilePath === path && !isDir) || (workfilePath.includes(path) && isDir))) {
             workfileMode.resetWorkfile();
           }
+          break;
+        }
+        case 'rename': {
+          workspaceMode.renameItem({ path, isDir });
+          break;
+        }
+        case 'create-file': {
+          // TODO:
+          break;
+        }
+        case 'create-folder': {
+          // TODO:
           break;
         }
         default:

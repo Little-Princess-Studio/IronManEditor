@@ -42,8 +42,19 @@
 
       .ant-tree-node-content-wrapper {
         overflow: hidden;
+      }
+
+      .ant-tree-title {
+        display: inline-block;
+        width: calc(100% - 24px);
+        overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        input {
+          width: 100%;
+          border: 1px solid #0070c1;
+        }
       }
     }
 
@@ -55,6 +66,7 @@
       .ant-tree-title {
         display: flex;
         align-items: center;
+        width: auto;
 
         span {
           flex: 1;
