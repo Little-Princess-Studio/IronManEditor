@@ -12,6 +12,7 @@ const FileViewer: React.FC = () => {
       {events.map((evt, index) => (
         <div className="event-item-row" key={evt.name + index}>
           <span className="event-item-index">[{index + 1}]</span>
+          <span className="event-item-name">[EVENT::{evt.name}]</span>
           <span className="flex-1">{evt.toString()}</span>
           <div className="event-item-actions">
             <i className="event-item-action action-edit" onClick={() => workfileMode.activateEvent(index)} />

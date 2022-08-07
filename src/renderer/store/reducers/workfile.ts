@@ -39,6 +39,23 @@ const saveWorkFile = async (path: string, content: string, events: any[]) => {
 };
 
 class WorkFileMode extends AbsStateMode<IState> {
+  private schema: { [name: string]: any } = null;
+
+  async getSchema() {
+    if (this.schema) {
+      return this.schema;
+    }
+
+    this.schema = await window.electron.schema();
+    return this.schema;
+  }
+
+  constructor() {
+    super();
+
+    this.getSchema();
+  }
+
   reducer(state: IState = INIT_STATE, action: { type: string; payload: Partial<IState> }): IState {
     switch (action.type) {
       case 'delete_workfile_event_at': {
@@ -75,7 +92,7 @@ class WorkFileMode extends AbsStateMode<IState> {
         const json = json5.parse(payload.content);
 
         if (Array(json.events) && json.events.length > 0) {
-          const schema = await window.electron.schema();
+          const schema = await this.getSchema();
           const ajv = new Ajv();
 
           ajv.addKeyword('toStr');
