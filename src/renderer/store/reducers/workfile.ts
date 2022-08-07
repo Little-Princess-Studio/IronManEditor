@@ -165,6 +165,13 @@ class WorkFileMode extends AbsStateMode<IState> {
       },
     });
   }
+
+  resetWorkfile() {
+    this.dispatch({
+      type: 'merge_workfile_state',
+      payload: INIT_STATE,
+    });
+  }
 }
 
 const workfileMode = new WorkFileMode();

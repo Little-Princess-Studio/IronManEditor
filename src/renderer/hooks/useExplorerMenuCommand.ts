@@ -5,16 +5,20 @@ import workspaceMode from '@renderer/store/reducers/workspace';
 import workfileMode from '@renderer/store/reducers/workfile';
 
 const useExplorerMenuCommand = () => {
-  const { path } = useSelector((state: RootState) => state.workfile);
-  const currentWorkfilePath = useRef(path);
-  currentWorkfilePath.current = path;
+  const workfilePath = useSelector((state: RootState) => state.workfile.path);
+  const workfilePathRef = useRef(workfilePath);
+  workfilePathRef.current = workfilePath;
 
   useEffect(() => {
     window.electron.ipcRenderer.on('explorer-menu-command', (type, path: string, isDir: boolean) => {
       switch (type) {
         case 'trash': {
           workspaceMode.trashItem(path, isDir);
-          // TODO: update workfile
+
+          const workfilePath = workfilePathRef.current;
+          if (workfilePath && ((workfilePath === path && !isDir) || (workfilePath.includes(path) && isDir))) {
+            workfileMode.resetWorkfile();
+          }
           break;
         }
         default:
