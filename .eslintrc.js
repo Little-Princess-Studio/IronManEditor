@@ -11,6 +11,7 @@ module.exports = {
     'import/no-self-import': 'off',
     'import/order': 'off',
     // Since React 17 and typescript 4.1 you can safely disable the rule
+    'react/jsx-props-no-spreading': 'off',
     'react/no-array-index-key': 'warn',
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',

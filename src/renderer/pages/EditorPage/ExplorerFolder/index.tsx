@@ -6,6 +6,7 @@ import workspaceMode from '@renderer/store/reducers/workspace';
 import workfileMode from '@renderer/store/reducers/workfile';
 import { Tree } from 'antd';
 import { DataNode, DirectoryTreeProps } from 'antd/lib/tree';
+import FileInput from './FileInput';
 import './index.less';
 
 const { DirectoryTree } = Tree;
@@ -74,8 +75,7 @@ const ExplorerFolder: React.FC = () => {
 
         let title: React.ReactNode = it.name;
         if (renameItem && renameItem.path === it.path && renameItem.isDir === it.isDir) {
-          // FIXME:
-          title = <input defaultValue={it.name} onBlur={() => workspaceMode.renameItem(null)} />;
+          title = <FileInput defaultValue={it.name} onBlur={() => workspaceMode.renameItem(null)} />;
         }
 
         arr.push({
