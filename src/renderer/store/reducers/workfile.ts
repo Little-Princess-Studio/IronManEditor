@@ -89,9 +89,15 @@ class WorkFileMode extends AbsStateMode<IState> {
 
     if (payload.content) {
       try {
-        const json = json5.parse(payload.content);
+        const json = json5.parse(payload.content) as { event_type: string; event_seq?: any[]; events: any[] };
 
-        if (Array(json.events) && json.events.length > 0) {
+        if (Array.isArray(json.event_seq) && json.event_seq.length > 0) {
+          for (let i = 0, len = json.event_seq.length; i < len; i++) {
+            // TODO:
+          }
+        }
+
+        if (Array.isArray(json.events) && json.events.length > 0) {
           const schema = await this.getSchema();
           const ajv = new Ajv();
 
