@@ -97,7 +97,15 @@ const ExplorerFolder: React.FC = () => {
           <>
             <span>{workspaceName}</span>
             <i
-              className="icon-collapse-all"
+              className="root-action icon-refresh"
+              onClickCapture={(e) => {
+                // TODO:
+                e.stopPropagation();
+                e.preventDefault();
+              }}
+            />
+            <i
+              className="root-action icon-collapse"
               onClickCapture={(e) => {
                 setExpandedKeys([workspaceDir]);
                 e.stopPropagation();

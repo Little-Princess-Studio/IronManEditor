@@ -76,12 +76,11 @@
         }
       }
 
-      .icon-collapse-all {
+      .root-action {
         flex-shrink: 0;
         display: inline-block;
         width: 16px;
         height: 16px;
-        background-image: url(./ic_collapse.svg);
         background-position: center;
         background-repeat: no-repeat;
         cursor: pointer;
@@ -91,6 +90,18 @@
         &:hover {
           background-color: #d3d3d3;
         }
+
+        & + .root-action {
+          margin-left: 4px;
+        }
+      }
+
+      .icon-refresh {
+        background-image: url(./ic_refresh.svg);
+      }
+
+      .icon-collapse {
+        background-image: url(./ic_collapse.svg);
       }
     }
   }

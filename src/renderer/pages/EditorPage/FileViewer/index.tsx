@@ -2,10 +2,32 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@renderer/store/configureStore';
 import workfileMode from '@renderer/store/reducers/workfile';
+import { useHotkeys } from 'react-hotkeys-hook';
 import './index.less';
 
 const FileViewer: React.FC = () => {
-  const { events } = useSelector((state: RootState) => state.workfile);
+  const { events, path } = useSelector((state: RootState) => state.workfile);
+
+  useHotkeys(
+    'ctrl+r',
+    () => {
+      if (path) {
+        window.electron.file
+          .readFile(path)
+          .then((resp) => {
+            if (!resp.success) {
+              throw resp;
+            }
+
+            workfileMode.updateWorkFile({ path, content: resp.data.content });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
+    [path]
+  );
 
   return (
     <div className="file-viewer-wrap">
