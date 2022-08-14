@@ -1,0 +1,58 @@
+.file-viewer-wrap {
+  .event-item-row {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    font-size: 14px;
+    padding: 8px 10px;
+    color: #999;
+
+    &:nth-child(odd) {
+      background-color: #fff;
+    }
+
+    &:nth-child(even) {
+      background-color: #eff1f8;
+    }
+  }
+
+  .event-item-index,
+  .event-item-name {
+    flex-shrink: 0;
+    color: #a26a6a;
+    margin-right: 10px;
+  }
+
+  .event-item-actions {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .event-item-action {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-position: center;
+    cursor: pointer;
+
+    & + .event-item-action {
+      margin-left: 12px;
+    }
+  }
+
+  .action-edit {
+    background-image: url(./ic_edit.svg);
+  }
+
+  .action-move {
+    background-image: url(./ic_move.svg);
+  }
+
+  .action-delete {
+    background-image: url(./ic_delete.svg);
+  }
+}

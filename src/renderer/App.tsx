@@ -1,15 +1,25 @@
 import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
-import './App.css';
-
-const Hello = () => {
-  return <div />;
-};
+import { useDispatch } from 'react-redux';
+import './assets/reset.css';
+import './assets/global.less';
+import 'tailwindcss/tailwind.css';
+import 'antd/dist/antd.css';
+import StartPage from './pages/StartPage';
+import EditorPage from './pages/EditorPage';
+import { bindDispatchs } from './store/reducers';
+import useExplorerMenuCommand from './hooks/useExplorerMenuCommand';
 
 export default function App() {
+  const dispatch = useDispatch();
+  bindDispatchs(dispatch);
+
+  useExplorerMenuCommand();
+
   return (
     <Router>
       <Switch>
-        <Route path="/" component={Hello} />
+        <Route exact path="/" component={StartPage} />
+        <Route path="/editor" component={EditorPage} />
       </Switch>
     </Router>
   );

@@ -1,0 +1,108 @@
+.explorer-folders-view {
+  @search-height: 60px;
+
+  .file-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: @search-height;
+    padding: 8px 10px;
+    padding-left: 12px;
+    background-color: #f8f8f8;
+  }
+
+  .file-filter-input {
+    @icon-size: 36px;
+
+    width: calc(100% - @icon-size);
+    height: 100%;
+    background: transparent;
+
+    &-icon {
+      position: absolute;
+      right: 10px;
+      display: inline-block;
+      width: @icon-size;
+      height: @icon-size;
+      background-image: url(./ic_search.svg);
+      background-size: 24px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
+
+  .file-list-wrap {
+    width: 100%;
+    height: calc(100% - @search-height);
+    overflow: auto;
+    padding: 8px 0;
+
+    .ant-tree {
+      background: transparent;
+
+      .ant-tree-node-content-wrapper {
+        overflow: hidden;
+      }
+
+      .ant-tree-title {
+        display: inline-block;
+        width: calc(100% - 24px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        input {
+          width: 100%;
+          border: 1px solid #0070c1;
+        }
+      }
+    }
+
+    .anticon {
+      vertical-align: unset;
+    }
+
+    .root-folder-treenode {
+      .ant-tree-title {
+        display: flex;
+        align-items: center;
+        width: auto;
+
+        span {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+
+      .root-action {
+        flex-shrink: 0;
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-position: center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        padding: 10px 12px;
+        border-radius: 3px;
+
+        &:hover {
+          background-color: #d3d3d3;
+        }
+
+        & + .root-action {
+          margin-left: 4px;
+        }
+      }
+
+      .icon-refresh {
+        background-image: url(./ic_refresh.svg);
+      }
+
+      .icon-collapse {
+        background-image: url(./ic_collapse.svg);
+      }
+    }
+  }
+}

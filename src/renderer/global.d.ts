@@ -1,0 +1,45 @@
+type IpcChannel = 'file:change' | 'explorer-menu-command';
+
+declare interface Window {
+  electron: {
+    dialog: {
+      showOpenDialog(options: Electron.OpenDialogOptions): Promise<Electron.OpenDialogReturnValue>;
+      showSaveDialog(options: Electron.SaveDialogOptions): Promise<Electron.SaveDialogReturnValue>;
+    };
+    file: {
+      readFile(filepath: string): Promise<IpcResponse<IFileData>>;
+      readFolder(folderPath: string): Promise<IpcResponse<IFileData[]>>;
+      watchFile(filepath: string): void;
+      writeFile(path: string, content: string): Promise<void>;
+    };
+    path: {
+      isDirectory(path: string): Promise<boolean>;
+      basename(path: string): Promise<string>;
+      dirname(path: string): Promise<string>;
+    };
+    ipcRenderer: {
+      on(channel: IpcChannel, func: (...res: any[]) => void): void;
+      once(channel: IpcChannel, func: (...res: any[]) => void): void;
+    };
+    window: {
+      setTitle(title: string): Promise<void>;
+    };
+    menu: {
+      showExplorerMenu(path: string, isDir: boolean): void;
+    };
+    schema: () => Promise<{ [name: string]: any }>;
+  };
+}
+
+interface IpcResponse<T = unknown> {
+  data: T;
+  success: boolean;
+}
+
+type IFileData = {
+  name: string;
+  path: string;
+  isDir: boolean;
+  content?: string;
+  children?: IFileData[];
+};
